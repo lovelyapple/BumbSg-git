@@ -19,11 +19,12 @@ public class BallController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            PowerUp();
+            PowerUp(1.2f);
         }
     }
-    public void PowerUp()
+    public void PowerUp(float powerUpRate)
     {
+        powerUpForcePower = powerUpRate;
         if(PowerUpCoroutine != null)
         {
             StopCoroutine(PowerUpCoroutine);

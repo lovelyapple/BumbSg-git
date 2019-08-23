@@ -18,8 +18,11 @@ public partial class FieldManager : MonoBehaviour
     }
     [SerializeField] Camera targetCamera;
     [SerializeField] GameObject linePrefab;
-    [SerializeField] LineController currentLine;
+    [SerializeField] LineController creatingLine;
+    [SerializeField] LineController selectedLine;
 
+
+    public List<LineController> selfLineList = new List<LineController>();
     [SerializeField] BallController ballPrefab;
     [SerializeField] Vector3 ballStartPosition;
     [SerializeField] BallController ball;
@@ -31,6 +34,8 @@ public partial class FieldManager : MonoBehaviour
     Vector3 startPoint;
 
     [SerializeField] Vector3 lastMousePointGet;
+    bool isChargeMode;
+    bool nextChargePointIsStart;
 
     void Awake()
     {
@@ -50,28 +55,89 @@ public partial class FieldManager : MonoBehaviour
     }
     void Update()
     {
+
         if (Input.GetMouseButtonDown(0))
         {
-            startPoint = GetMouseCameraPoint();
-            var endPoint = startPoint + Vector3.up * 0.01f;
+            var selectObj = CheckIsHoveringLine();
 
-            var line = Instantiate(linePrefab);
-            UpdateLineObj(line, startPoint, endPoint);
-            currentLine = line.GetComponent<LineController>();
+            // create new
+            if (selectObj == null)
+            {
+                startPoint = GetMouseCameraPoint();
+                var endPoint = startPoint + Vector3.up * 0.01f;
+
+                var line = Instantiate(linePrefab);
+                UpdateLineObj(line, startPoint, endPoint);
+                creatingLine = line.GetComponent<LineController>();
+                selfLineList.Add(creatingLine);
+                isChargeMode = false;
+            }
+            // selectOne
+            else
+            {
+                selectedLine = selectObj.GetComponent<LineController>();
+
+                // 万が一
+                if (selectedLine == null)
+                {
+                    Destroy(selectObj);
+                    return;
+                }
+
+                isChargeMode = true;
+            }
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (currentLine != null)
+            if (creatingLine != null)
             {
-                currentLine = null;
+                creatingLine = null;
             }
+
+            if (selectedLine != null)
+            {
+                selectedLine = null;
+            }
+
+            isChargeMode = false;
+            nextChargePointIsStart = false;
         }
         else
         {
-            if (currentLine == null || currentLine.IsDead) return;
+            if (isChargeMode)
+            {
+                if (selectedLine == null || selectedLine.IsDead)
+                {
+                    isChargeMode = false;
+                    return;
+                }
 
-            var endPoint = GetMouseCameraPoint();
-            UpdateLineObj(currentLine.gameObject, startPoint, endPoint);
+                var endPoint = GetMouseCameraPoint();
+
+                if (nextChargePointIsStart)
+                {
+                    if (selectedLine.CheckPointRange(endPoint, true))
+                    {
+                        nextChargePointIsStart = false;
+                    }
+                }
+                else
+                {
+                    if (selectedLine.CheckPointRange(endPoint, false))
+                    {
+                        nextChargePointIsStart = true;
+                        selectedLine.PowerUpOneRound();
+                    }
+                }
+            }
+            else
+            {
+                if (creatingLine == null || creatingLine.IsDead) return;
+
+                var endPoint = GetMouseCameraPoint();
+                UpdateLineObj(creatingLine.gameObject, startPoint, endPoint);
+                creatingLine.Setup(startPoint, endPoint);
+            }
         }
     }
     void UpdateLineObj(GameObject lineObj, Vector3 start, Vector3 end)
@@ -89,5 +155,33 @@ public partial class FieldManager : MonoBehaviour
         lastMousePointGet = ray.origin + ray.direction * rayTimes;
         lastMousePointGet.z = 0;//最後の調整としてズレ修正
         return lastMousePointGet;
+    }
+    GameObject CheckIsHoveringLine()
+    {
+        var ray = targetCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, cameraDepth * 2))
+        {
+            if (hit.collider.gameObject.name == "HoverArea")
+            {
+                return hit.collider.transform.parent.gameObject;
+            }
+        }
+
+        return null;
+    }
+    public void RemoveLine(LineController line)
+    {
+        if (selfLineList.Remove(line))
+        {
+            Debug.Log("success remove line");
+        }
+    }
+    public LineController TrySelectOneLine(Vector3 point)
+    {
+        var lineCnt = selfLineList.Count;
+
+        return null;
     }
 }
