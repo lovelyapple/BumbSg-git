@@ -11,13 +11,25 @@ public partial class FieldManager : MonoBehaviour
     {
         if (_instance == null)
         {
-            var fieldRoot = GameObject.Find("FieldRoot");
-
-            _instance = fieldRoot.GetComponent<FieldManager>();
+            return null;
         }
 
         return _instance;
     }
+    public void SetupInstace()
+    {
+        var fieldRoot = GameObject.Find("FieldRoot");
+
+        if (fieldRoot == null)
+        {
+            return;
+        }
+
+        _instance = fieldRoot.GetComponent<FieldManager>();
+
+        fieldMenu.gameObject.SetActive(true);
+    }
+    [SerializeField] FieldMenu fieldMenu;
     [SerializeField] Camera targetCamera;
     [SerializeField] GameObject linePrefab;
     [SerializeField] LineController creatingLine;
@@ -56,8 +68,6 @@ public partial class FieldManager : MonoBehaviour
             }
         }
     }
-
-
     public List<LineController> selfLineList = new List<LineController>();
     [SerializeField] BallController ballPrefab;
     [SerializeField] Vector3 ballStartPosition;
@@ -73,9 +83,10 @@ public partial class FieldManager : MonoBehaviour
     bool isChargeMode;
     bool nextChargePointIsStart;
     public Action<int> onUpdateLineLeftAcount;
-
     void Awake()
     {
+        SetupInstace();
+
         if (targetCamera == null)
         {
             targetCamera = Camera.main;

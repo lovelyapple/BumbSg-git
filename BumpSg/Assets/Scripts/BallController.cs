@@ -4,28 +4,54 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    [SerializeField] Rigidbody rigidbody;
+    [SerializeField] Rigidbody ballRigidbody;
     [SerializeField] float powerUpHeadTime;
     [SerializeField] float powerUpForcePower;
+
+    [SerializeField] float endPointForce = 1.0f;
     Coroutine PowerUpCoroutine;
+    public bool IsFalling;
+    public bool IsBallDead;
+    public float HoleFallInTime = 2f;
+    public float HoleFallInTimeLeft;
+    Vector3 holePosition;
     void Awake()
     {
-        if (rigidbody == null)
+        if (ballRigidbody == null)
         {
-            rigidbody = GetComponent<Rigidbody>();
+            ballRigidbody = GetComponent<Rigidbody>();
         }
     }
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (IsBallDead)
         {
-            PowerUp(1.2f);
+            transform.position = holePosition;
+            return;
+        }
+
+        if (IsFalling)
+        {
+            var diff = (holePosition - transform.position).normalized;
+            diff.z = 0;
+            ballRigidbody.AddForce(diff * endPointForce, ForceMode.Impulse);
+
+            if (HoleFallInTimeLeft > 0)
+            {
+                HoleFallInTimeLeft -= Time.deltaTime;
+
+                if (HoleFallInTimeLeft <= 0)
+                {
+                    IsBallDead = true;
+                    HoleFallInTimeLeft = 0;
+                }
+            }
         }
     }
     public void PowerUp(float powerUpRate)
     {
         powerUpForcePower = powerUpRate;
-        if(PowerUpCoroutine != null)
+        if (PowerUpCoroutine != null)
         {
             StopCoroutine(PowerUpCoroutine);
             PowerUpCoroutine = null;
@@ -48,6 +74,17 @@ public class BallController : MonoBehaviour
         var dir = currentPos - beforePos;
         dir.z = 0;
         dir *= powerUpForcePower;
-        rigidbody.AddForce(dir, ForceMode.Impulse);
+        ballRigidbody.AddForce(dir, ForceMode.Impulse);
+    }
+    public void FallIntoHole(HolePoint point)
+    {
+        if (IsFalling || IsBallDead)
+        {
+            return;
+        }
+
+        holePosition = point.gameObject.transform.position;
+        IsFalling = true;
+        HoleFallInTimeLeft = HoleFallInTime;
     }
 }
