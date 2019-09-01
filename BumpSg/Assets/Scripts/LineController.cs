@@ -1,9 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[Serializable]
+public class PowerColor
+{
+    [SerializeField] public float powerRate;
+    [SerializeField] public Color color;
+}
 public class LineController : MonoBehaviour
 {
+    [SerializeField] List<PowerColor> powerColors;
+    [SerializeField] Renderer lineRender;
     [SerializeField] Collider bodyCol;
     public bool IsDead;
     public float PowerUpPerRow = 0.1f;
@@ -22,6 +30,7 @@ public class LineController : MonoBehaviour
     {
         defaultScale = transform.localScale;
         bodyCol = GetComponent<Collider>();
+        lineRender = GetComponent<Renderer>();
     }
     public void Setup(Vector3 startP, Vector3 endP)
     {
@@ -44,6 +53,7 @@ public class LineController : MonoBehaviour
     public void PowerUpOneRound()
     {
         PowerUpStrength += PowerUpPerRow;
+        SetupColor();
         Debug.Log(gameObject.name + "power up! " + PowerUpStrength);
     }
     public void OnCollisionEnter(Collision collision)
@@ -86,5 +96,25 @@ public class LineController : MonoBehaviour
         }
 
         Destroy(this.gameObject);
+    }
+    public void SetupColor()
+    {
+        PowerColor setCol = null;
+        foreach (var col in powerColors)
+        {
+            if (PowerUpStrength > col.powerRate)
+            {
+                setCol = col;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (setCol != null)
+        {
+            lineRender.material.color = setCol.color;
+        }
     }
 }
