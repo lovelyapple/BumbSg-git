@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public partial class FieldManager : MonoBehaviour
 {
+    public static bool IsInifinityLineMode;
     static FieldManager _instance;
     public static FieldManager GetInstance()
     {
@@ -20,6 +22,40 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] GameObject linePrefab;
     [SerializeField] LineController creatingLine;
     [SerializeField] LineController selectedLine;
+    int _lineLeft = 4;
+    public int LineLeft
+    {
+        get
+        {
+            if (IsInifinityLineMode)
+            {
+                return 10;
+            }
+
+            if (_lineLeft <= 0)
+            {
+                return 0;
+            }
+
+            return _lineLeft;
+        }
+
+        set
+        {
+            if (IsInifinityLineMode)
+            {
+                _lineLeft = 10;
+            }
+            if (value <= 0)
+            {
+                _lineLeft = 0;
+            }
+            else
+            {
+                _lineLeft = value;
+            }
+        }
+    }
 
 
     public List<LineController> selfLineList = new List<LineController>();
@@ -36,6 +72,7 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] Vector3 lastMousePointGet;
     bool isChargeMode;
     bool nextChargePointIsStart;
+    public Action<int> onUpdateLineLeftAcount;
 
     void Awake()
     {
@@ -63,13 +100,23 @@ public partial class FieldManager : MonoBehaviour
             // create new
             if (selectObj == null)
             {
-                startPoint = GetMouseCameraPoint();
-                var endPoint = startPoint + Vector3.up * 0.01f;
+                if (LineLeft > 0)
+                {
+                    startPoint = GetMouseCameraPoint();
+                    var endPoint = startPoint + Vector3.up * 0.01f;
 
-                var line = Instantiate(linePrefab);
-                UpdateLineObj(line, startPoint, endPoint);
-                creatingLine = line.GetComponent<LineController>();
-                selfLineList.Add(creatingLine);
+                    var line = Instantiate(linePrefab);
+                    UpdateLineObj(line, startPoint, endPoint);
+                    creatingLine = line.GetComponent<LineController>();
+                    selfLineList.Add(creatingLine);
+                    LineLeft--;
+
+                    if (onUpdateLineLeftAcount != null)
+                    {
+                        onUpdateLineLeftAcount.Invoke(LineLeft);
+                    }
+                }
+
                 isChargeMode = false;
             }
             // selectOne
@@ -175,6 +222,13 @@ public partial class FieldManager : MonoBehaviour
     {
         if (selfLineList.Remove(line))
         {
+            LineLeft++;
+
+            if (onUpdateLineLeftAcount != null)
+            {
+                onUpdateLineLeftAcount.Invoke(LineLeft);
+            }
+
             Debug.Log("success remove line");
         }
     }
