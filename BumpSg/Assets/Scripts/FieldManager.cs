@@ -166,6 +166,7 @@ public partial class FieldManager : MonoBehaviour
                     if (selectedLine.CheckPointRange(endPoint, true))
                     {
                         nextChargePointIsStart = false;
+                        selectedLine.PowerUpOneRound();
                     }
                 }
                 else
