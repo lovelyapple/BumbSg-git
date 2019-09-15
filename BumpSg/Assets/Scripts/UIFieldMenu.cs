@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 public class UIFieldMenu : MonoBehaviour
 {
+    [SerializeField] RectTransform fieldMenuTransform;
     [SerializeField] GameObject readyRootObj;
     [SerializeField] GameObject playRootObj;
     [SerializeField] GameObject goalRootObj;
     [SerializeField] Text lineLeftLabel;
     [SerializeField] GameObject[] lineLeftObj;
+    [SerializeField] GameObject ballDirectionObj;
+    [SerializeField] Vector3 ballPanelPos;
+    public Transform ballTransform;
+    public Camera targetCamera;
     void OnEnable()
     {
         FieldManager.GetInstance().onUpdateLineLeftAcount += UpdateLineLeftAmount;
@@ -23,17 +28,48 @@ public class UIFieldMenu : MonoBehaviour
             FieldManager.GetInstance().onUpdateLineLeftAcount -= UpdateLineLeftAmount;
         }
     }
+    void Update()
+    {
+        if (ballTransform != null && targetCamera != null)
+        {
+            ballPanelPos = targetCamera.WorldToViewportPoint(ballTransform.position);
+
+            if (ballPanelPos.x < 0 || ballPanelPos.x > 1 || ballPanelPos.y < 0 || ballPanelPos.y > 1)
+            {
+                ballDirectionObj.SetActive(true);
+                var panelViewPortPos = ballPanelPos;
+                panelViewPortPos.x = Mathf.Clamp(panelViewPortPos.x, 0, 1f);
+                panelViewPortPos.y = Mathf.Clamp(panelViewPortPos.y, 0, 1f);
+
+                var panelViewPos = Vector3.zero;
+                panelViewPos.x = fieldMenuTransform.rect.width * panelViewPortPos.x - fieldMenuTransform.rect.width / 2;
+                panelViewPos.y = fieldMenuTransform.rect.height * panelViewPortPos.y - fieldMenuTransform.rect.height / 2;
+
+                ballDirectionObj.transform.localPosition = panelViewPos;
+            }
+            else
+            {
+                ballDirectionObj.SetActive(false);
+            }
+        }
+
+    }
+    public void Setup(Camera targetCamera)
+    {
+        this.targetCamera = targetCamera;
+    }
     public void SetupAsReady()
     {
         readyRootObj.SetActive(true);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(false);
     }
-    public void SetupAsPlay()
+    public void SetupAsPlay(Transform ballTransform)
     {
         readyRootObj.SetActive(false);
         playRootObj.SetActive(true);
         goalRootObj.SetActive(false);
+        this.ballTransform = ballTransform;
     }
     public void SetupAsGoal()
     {

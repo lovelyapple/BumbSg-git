@@ -102,6 +102,7 @@ public partial class FieldManager : MonoBehaviour
         targetCamera.transform.position = pos;
 
         UpdateGameState(GameState.Ready);
+        fieldMenu.Setup(targetCamera);
     }
     void Update()
     {
@@ -133,14 +134,14 @@ public partial class FieldManager : MonoBehaviour
                     ball.OnBallFallingInToHole = OnBallFallInToHole;
                 }
 
-                fieldMenu.SetupAsPlay();
+                fieldMenu.SetupAsPlay(ball.gameObject.transform);
                 break;
             case GameState.Goal:
                 fieldMenu.SetupAsGoal();
                 break;
         }
     }
-    
+
     void UpdateLineObj(GameObject lineObj, Vector3 start, Vector3 end)
     {
         lineObj.transform.position = (start + end) / 2;
