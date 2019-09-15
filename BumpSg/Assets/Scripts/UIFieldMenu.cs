@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FieldMenu : MonoBehaviour
+public class UIFieldMenu : MonoBehaviour
 {
+    [SerializeField] GameObject readyRootObj;
+    [SerializeField] GameObject playRootObj;
+    [SerializeField] GameObject goalRootObj;
     [SerializeField] Text lineLeftLabel;
     [SerializeField] GameObject[] lineLeftObj;
     void OnEnable()
@@ -20,9 +23,35 @@ public class FieldMenu : MonoBehaviour
             FieldManager.GetInstance().onUpdateLineLeftAcount -= UpdateLineLeftAmount;
         }
     }
+    public void SetupAsReady()
+    {
+        readyRootObj.SetActive(true);
+        playRootObj.SetActive(false);
+        goalRootObj.SetActive(false);
+    }
+    public void SetupAsPlay()
+    {
+        readyRootObj.SetActive(false);
+        playRootObj.SetActive(true);
+        goalRootObj.SetActive(false);
+    }
+    public void SetupAsGoal()
+    {
+        readyRootObj.SetActive(false);
+        playRootObj.SetActive(false);
+        goalRootObj.SetActive(true);
+    }
+    public void OnClickStart()
+    {
+        FieldManager.GetInstance().UpdateGameState(GameState.Play);
+    }
+    public void OnClickReStart()
+    {
+        FieldManager.GetInstance().UpdateGameState(GameState.Ready);
+    }
     public void UpdateLineLeftAmount(int left)
     {
-        if (FieldManager.IsInifinityLineMode)
+        if (FieldManager.GetInstance().IsInifinityLineMode)
         {
             for (int i = 0; i < lineLeftObj.Length; i++)
             {

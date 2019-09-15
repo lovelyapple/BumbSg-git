@@ -2,10 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum GameState
+{
+    Ready,
+    Play,
+    Goal,
+}
 public partial class FieldManager : MonoBehaviour
 {
-    public static bool IsInifinityLineMode;
+    public bool IsInifinityLineMode;
     static FieldManager _instance;
     public static FieldManager GetInstance()
     {
@@ -29,7 +34,7 @@ public partial class FieldManager : MonoBehaviour
 
         fieldMenu.gameObject.SetActive(true);
     }
-    [SerializeField] FieldMenu fieldMenu;
+    [SerializeField] UIFieldMenu fieldMenu;
     [SerializeField] Camera targetCamera;
     [SerializeField] GameObject linePrefab;
     [SerializeField] LineController creatingLine;
@@ -78,10 +83,10 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] float lineWidth;
     [SerializeField] float lineDepth;
     Vector3 startPoint;
-
     [SerializeField] Vector3 lastMousePointGet;
     bool isChargeMode;
     bool nextChargePointIsStart;
+    public GameState gameState;
     public Action<int> onUpdateLineLeftAcount;
     void Awake()
     {
@@ -92,121 +97,56 @@ public partial class FieldManager : MonoBehaviour
             targetCamera = Camera.main;
         }
 
-        if (ball == null)
-        {
-            ball = Instantiate(ballPrefab, ballStartPosition, Quaternion.identity);
-        }
-
         var pos = targetCamera.transform.position;
         pos.z = -cameraDepth;
         targetCamera.transform.position = pos;
+
+        UpdateGameState(GameState.Ready);
     }
     void Update()
     {
-
-        if (Input.GetMouseButtonDown(0))
+        switch (gameState)
         {
-            var selectObj = CheckIsHoveringLine();
-
-            // create new
-            if (selectObj == null)
-            {
-                if (LineLeft > 0)
-                {
-                    startPoint = GetMouseCameraPoint();
-                    var endPoint = startPoint + Vector3.up * 0.01f;
-
-                    var line = Instantiate(linePrefab);
-                    UpdateLineObj(line, startPoint, endPoint);
-                    creatingLine = line.GetComponent<LineController>();
-                    selfLineList.Add(creatingLine);
-                    LineLeft--;
-
-                    if (onUpdateLineLeftAcount != null)
-                    {
-                        onUpdateLineLeftAcount.Invoke(LineLeft);
-                    }
-                }
-
-                isChargeMode = false;
-            }
-            // selectOne
-            else
-            {
-                selectedLine = selectObj.GetComponent<LineController>();
-
-                // 万が一
-                if (selectedLine == null)
-                {
-                    Destroy(selectObj);
-                    return;
-                }
-
-                isChargeMode = true;
-            }
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            if (creatingLine != null)
-            {
-                creatingLine = null;
-            }
-
-            if (selectedLine != null)
-            {
-                selectedLine = null;
-            }
-
-            isChargeMode = false;
-            nextChargePointIsStart = false;
-        }
-        else
-        {
-            if (isChargeMode)
-            {
-                if (selectedLine == null || selectedLine.IsDead)
-                {
-                    isChargeMode = false;
-                    return;
-                }
-
-                var endPoint = GetMouseCameraPoint();
-
-                if (nextChargePointIsStart)
-                {
-                    if (selectedLine.CheckPointRange(endPoint, true))
-                    {
-                        nextChargePointIsStart = false;
-                        selectedLine.PowerUpOneRound();
-                    }
-                }
-                else
-                {
-                    if (selectedLine.CheckPointRange(endPoint, false))
-                    {
-                        nextChargePointIsStart = true;
-                        selectedLine.PowerUpOneRound();
-                    }
-                }
-            }
-            else
-            {
-                if (creatingLine == null || creatingLine.IsDead) return;
-
-                var endPoint = GetMouseCameraPoint();
-                UpdateLineObj(creatingLine.gameObject, startPoint, endPoint);
-                creatingLine.Setup(startPoint, endPoint);
-            }
+            case GameState.Ready:
+                break;
+            case GameState.Play:
+                UpdateInteractive();
+                UpdateTargetCameraTransform();
+                break;
+            case GameState.Goal:
+                break;
         }
     }
+    public void UpdateGameState(GameState state)
+    {
+        this.gameState = state;
+
+        switch (gameState)
+        {
+            case GameState.Ready:
+                fieldMenu.SetupAsReady();
+                break;
+            case GameState.Play:
+                if (ball == null)
+                {
+                    ball = Instantiate(ballPrefab, ballStartPosition, Quaternion.identity);
+                    ball.OnBallFallingInToHole = OnBallFallInToHole;
+                }
+
+                fieldMenu.SetupAsPlay();
+                break;
+            case GameState.Goal:
+                fieldMenu.SetupAsGoal();
+                break;
+        }
+    }
+    
     void UpdateLineObj(GameObject lineObj, Vector3 start, Vector3 end)
     {
         lineObj.transform.position = (start + end) / 2;
         lineObj.transform.right = (end - start).normalized;
         lineObj.transform.localScale = new Vector3((end - start).magnitude, lineWidth, lineDepth);
     }
-
-
     Vector3 GetMouseCameraPoint()
     {
         var ray = targetCamera.ScreenPointToRay(Input.mousePosition);
@@ -249,5 +189,14 @@ public partial class FieldManager : MonoBehaviour
         var lineCnt = selfLineList.Count;
 
         return null;
+    }
+    public void OnBallFallInToHole(BallController ballController)
+    {
+        if (ball != null)
+        {
+            Destroy(ball.gameObject);
+        }
+
+        ball = null;
     }
 }

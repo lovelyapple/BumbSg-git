@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class BallController : MonoBehaviour
     public float HoleFallInTime = 2f;
     public float HoleFallInTimeLeft;
     Vector3 holePosition;
+    public Action<BallController> OnBallFallingInToHole;
     void Awake()
     {
         if (ballRigidbody == null)
@@ -44,6 +46,11 @@ public class BallController : MonoBehaviour
                 {
                     IsBallDead = true;
                     HoleFallInTimeLeft = 0;
+
+                    if (OnBallFallingInToHole != null)
+                    {
+                        OnBallFallingInToHole.Invoke(this);
+                    }
                 }
             }
         }
