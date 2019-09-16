@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -46,12 +47,17 @@ public class SocketServerBase : MonoBehaviour
         while (client.Connected)
         {
             Debug.Log("client is connecting " + client.Client.RemoteEndPoint);
-            while (!reader.EndOfStream)
-            {
-                // 一行分の文字列を受け取る
-                var str = reader.ReadLine();
-                OnMessage(str);
-            }
+            // while (!reader.EndOfStream)
+            // {
+            //     // 一行分の文字列を受け取る
+            //     var str = reader.ReadLine();
+            //     OnMessage(str);
+            // }
+
+            byte[] bytes = new byte[256];
+            client.Client.Receive(bytes);
+            string s = Encoding.UTF8.GetString(bytes);
+            OnMessage(s);
 
             // クライアントの接続が切れたら
             if (client.Client.Poll(1000, SelectMode.SelectRead) && (client.Client.Available == 0))
@@ -63,7 +69,6 @@ public class SocketServerBase : MonoBehaviour
             }
         }
     }
-
 
     // メッセージ受信
     protected virtual void OnMessage(string msg)

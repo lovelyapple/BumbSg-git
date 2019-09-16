@@ -31,8 +31,13 @@ public class SocketClientBase : MonoBehaviour
         {
             var bytes = StrToByteArray("Hellow World");
 
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
+
+            if (stream.CanWrite)
+            {
+                Debug.Log("writed");
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush();
+            }
         }
     }
     public static byte[] StrToByteArray(string str)
