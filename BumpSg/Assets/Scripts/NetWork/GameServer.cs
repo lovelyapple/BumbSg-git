@@ -7,19 +7,33 @@
 
 public class GameServer : SocketServerBase
 {
+    static GameServer _instance;
+    void Start()
+    {
+        _instance = this;
+        StartServer();
+    }   
+    public static GameServer GetInstance()
+    {
+        return _instance;
+    }
 #pragma warning disable 0649
     // ポート指定（他で使用していないもの、使用されていたら手元の環境によって変更）
     [SerializeField] private int _port;
     public static string localServerIp;
 #pragma warning restore 0649
 
-    private void Start()
+    public void StartServer()
     {
         // 接続中のIPアドレスを取得
         var ipAddress = GetLocalIPAddress();
         // 指定したポートを開く
-        Listen(ipAddress, _port);
+        BeginListen(ipAddress, _port);
         localServerIp = ipAddress;
+    }
+    public void StopServer()
+    {
+        StopListen();
     }
 
     // クライアントからメッセージ受信

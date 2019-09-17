@@ -19,13 +19,18 @@ public class SocketServerBase : MonoBehaviour
     private readonly List<TcpClient> _clients = new List<TcpClient>();
 
     // ソケット接続準備、待機
-    protected void Listen(string host, int port)
+    protected void BeginListen(string host, int port)
     {
         Debug.Log("ipAddress:" + host + " port:" + port);
         var ip = IPAddress.Parse(host);
         _listener = new TcpListener(ip, port);
         _listener.Start();
         _listener.BeginAcceptSocket(DoAcceptTcpClientCallback, _listener);
+    }
+    protected void StopListen()
+    {
+        _listener.Stop();
+        _listener = null;
     }
 
     // クライアントからの接続処理
