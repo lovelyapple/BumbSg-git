@@ -15,7 +15,7 @@ using UnityEngine;
 
 public class SocketServerBase : MonoBehaviour
 {
-    private TcpListener _listener;
+    protected TcpListener _listener;
     private readonly List<TcpClient> _clients = new List<TcpClient>();
 
     // ソケット接続準備、待機

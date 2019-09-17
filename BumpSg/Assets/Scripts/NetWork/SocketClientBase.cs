@@ -19,6 +19,12 @@ public class SocketClientBase : MonoBehaviour
 
     void Start()
     {
+        if (!GameServer.IsServerStarted())
+        {
+            Debug.Log("There is no server running");
+            return;
+        }
+
         serverIp = GameServer.localServerIp;
         client = new TcpClient(serverIp, serverPort);
         stream = client.GetStream();
@@ -45,7 +51,9 @@ public class SocketClientBase : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            var bytes = StrToByteArray("123456789");
+            var item = ProtocolMaker.Mk_SimpleMsg(0, "123456789");
+            var json = ProtocolMaker.SerializeToJson(item);
+            var bytes = StrToByteArray(json);
 
 
             if (stream.CanWrite)
@@ -86,6 +94,14 @@ public class SocketClientBase : MonoBehaviour
         string message = enc.GetString(readbuf, 0, bytes);
         message = message.Replace("\r", "").Replace("\n", "");
         Debug.Log("ReadCallback " + message);
+
+        var item = ProtocolMaker.MakeToJson(message);
+
+        if(item != null)
+        {
+            ProtocolMaker.DeserializeProtocol(item);
+        }
+
         isStopReading = false;
     }
     public static byte[] StrToByteArray(string str)

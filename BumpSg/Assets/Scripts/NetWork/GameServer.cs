@@ -12,10 +12,14 @@ public class GameServer : SocketServerBase
     {
         _instance = this;
         StartServer();
-    }   
+    }
     public static GameServer GetInstance()
     {
         return _instance;
+    }
+    public static bool IsServerStarted()
+    {
+        return GetInstance() != null && GetInstance()._listener != null;
     }
 #pragma warning disable 0649
     // ポート指定（他で使用していないもの、使用されていたら手元の環境によって変更）
@@ -45,18 +49,8 @@ public class GameServer : SocketServerBase
         // あとは送られてきたメッセージによって何かしたいことを書く
         // -------------------------------------------------------------
 
-        // 今回は受信した整数値を表示用システムにセットする
-        int num;
-        // 整数値以外は何もしない
-        if (int.TryParse(msg, out num))
-        {
-            // クライアントに受領メッセージを返す
-            SendMessageToClient("Accept:" + num + "\n");
-        }
-        else
-        {
-            // クライアントにエラーメッセージを返す
-            SendMessageToClient("Error\n");
-        }
+        // クライアントに受領メッセージを返す
+        SendMessageToClient(msg + "¥n");
+
     }
 }
