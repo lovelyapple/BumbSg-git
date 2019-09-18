@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using System;
 
-public class SocketClientBase : MonoBehaviour
+public partial class SocketClientBase : MonoBehaviour
 {
     TcpClient client;
     NetworkStream stream;
@@ -16,19 +16,22 @@ public class SocketClientBase : MonoBehaviour
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
-
-    void Start()
+    // if (!GameServer.IsServerStarted())
+    // {
+    //     Debug.Log("There is no server running");
+    //     return;
+    // }
+    //serverIp = GameServer.localServerIp;
+    public void ConnectToServer()
     {
-        if (!GameServer.IsServerStarted())
+        client = new TcpClient(serverIp, serverPort);
+
+        if (client == null)
         {
-            Debug.Log("There is no server running");
             return;
         }
 
-        serverIp = GameServer.localServerIp;
-        client = new TcpClient(serverIp, serverPort);
         stream = client.GetStream();
-
         streamReadingCoroutine = StartCoroutine(StartReading());
     }
     void OnDisable()
@@ -47,23 +50,7 @@ public class SocketClientBase : MonoBehaviour
             client = null;
         }
     }
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            var item = ProtocolMaker.Mk_SimpleMsg(0, "123456789");
-            var json = ProtocolMaker.SerializeToJson(item);
-            var bytes = StrToByteArray(json);
 
-
-            if (stream.CanWrite)
-            {
-                Debug.Log("writed");
-                stream.Write(bytes, 0, bytes.Length);
-                stream.Flush();
-            }
-        }
-    }
     private IEnumerator StartReading()
     {
         Debug.Log("START START");
@@ -75,7 +62,7 @@ public class SocketClientBase : MonoBehaviour
             {
                 StartCoroutine(ReadMessage());
             }
-            yield return new WaitForSeconds(1f);//あんまりしょっちゅうやらないために
+            yield return new WaitForSeconds(0.01f);//あんまりしょっちゅうやらないために
         }
     }
     //常駐
@@ -97,9 +84,9 @@ public class SocketClientBase : MonoBehaviour
 
         var item = ProtocolMaker.MakeToJson(message);
 
-        if(item != null)
+        if (item != null)
         {
-            ProtocolMaker.DeserializeProtocol(item);
+            ProtocolMaker.DebugDeserializeProtocol(item);
         }
 
         isStopReading = false;
@@ -110,4 +97,5 @@ public class SocketClientBase : MonoBehaviour
                                            //System.Text.UTF8Encoding  encoding=new System.Text.UTF8Encoding();
         return encoding.GetBytes(str);
     }
+
 }

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIFieldMenu : MonoBehaviour
+public partial class UIFieldMenu : MonoBehaviour
 {
     [SerializeField] RectTransform fieldMenuTransform;
+    [SerializeField] GameObject titleRootObj;
     [SerializeField] GameObject readyRootObj;
     [SerializeField] GameObject playRootObj;
     [SerializeField] GameObject goalRootObj;
@@ -28,44 +29,51 @@ public class UIFieldMenu : MonoBehaviour
             FieldManager.GetInstance().onUpdateLineLeftAcount -= UpdateLineLeftAmount;
         }
     }
+
     void Update()
     {
-        if (ballTransform != null && targetCamera != null)
+        if (FieldManager.GetInstance() == null)
         {
-            ballPanelPos = targetCamera.WorldToViewportPoint(ballTransform.position);
-
-            if (ballPanelPos.x < 0 || ballPanelPos.x > 1 || ballPanelPos.y < 0 || ballPanelPos.y > 1)
-            {
-                ballDirectionObj.SetActive(true);
-                var panelViewPortPos = ballPanelPos;
-                panelViewPortPos.x = Mathf.Clamp(panelViewPortPos.x, 0, 1f);
-                panelViewPortPos.y = Mathf.Clamp(panelViewPortPos.y, 0, 1f);
-
-                var panelViewPos = Vector3.zero;
-                panelViewPos.x = fieldMenuTransform.rect.width * panelViewPortPos.x - fieldMenuTransform.rect.width / 2;
-                panelViewPos.y = fieldMenuTransform.rect.height * panelViewPortPos.y - fieldMenuTransform.rect.height / 2;
-
-                ballDirectionObj.transform.localPosition = panelViewPos;
-            }
-            else
-            {
-                ballDirectionObj.SetActive(false);
-            }
+            return;
         }
 
+        switch (FieldManager.GetInstance().gameState)
+        {
+            case GameState.Title:
+                UpdateTitle();
+                break;
+            case GameState.Ready:
+                break;
+            case GameState.Play:
+                UpdatePlay();
+                break;
+            case GameState.Goal:
+                break;
+        }
     }
     public void Setup(Camera targetCamera)
     {
         this.targetCamera = targetCamera;
     }
+    public void SetupAsTitle()
+    {
+        ipLabel.text = GameServer.GetLocalIPAddress();
+        titleRootObj.SetActive(true);
+        readyRootObj.SetActive(false);
+        playRootObj.SetActive(false);
+        goalRootObj.SetActive(false);
+        FieldManager.IsHost = false;
+    }
     public void SetupAsReady()
     {
+        titleRootObj.SetActive(false);
         readyRootObj.SetActive(true);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(false);
     }
     public void SetupAsPlay(Transform ballTransform)
     {
+        titleRootObj.SetActive(false);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(true);
         goalRootObj.SetActive(false);
@@ -73,51 +81,23 @@ public class UIFieldMenu : MonoBehaviour
     }
     public void SetupAsGoal()
     {
+        titleRootObj.SetActive(false);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(true);
     }
-    public void OnClickStart()
+    public void OnClickCreateServerInTitle()
     {
-        FieldManager.GetInstance().UpdateGameState(GameState.Play);
-    }
-    public void OnClickReStart()
-    {
+        GameServer.GetInstance().StartServer();
         FieldManager.GetInstance().UpdateGameState(GameState.Ready);
+        FieldManager.IsHost = true;
     }
-    public void UpdateLineLeftAmount(int left)
+    public void OnClickStartClientInTitle()
     {
-        if (FieldManager.GetInstance().IsInifinityLineMode)
-        {
-            for (int i = 0; i < lineLeftObj.Length; i++)
-            {
-                lineLeftObj[i].SetActive(true);
-            }
-
-            lineLeftLabel.text = "∞";
-            return;
-        }
-        var leftTmp = left;
-        for (int i = 0; i < lineLeftObj.Length; i++)
-        {
-            if (i < left)
-            {
-                lineLeftObj[i].SetActive(true);
-                leftTmp--;
-            }
-            else
-            {
-                lineLeftObj[i].SetActive(false);
-            }
-        }
-
-        if (leftTmp > 0)
-        {
-            lineLeftLabel.text = "x" + leftTmp;
-        }
-        else
-        {
-            lineLeftLabel.text = "";
-        }
+        FieldManager.IsHost = false;
+    }
+    public void OnClickStopServerInReady()
+    {
+        GameServer.GetInstance().StopServer();
     }
 }

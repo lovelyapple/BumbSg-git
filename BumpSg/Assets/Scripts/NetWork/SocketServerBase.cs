@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,30 +17,55 @@ using UnityEngine;
 public class SocketServerBase : MonoBehaviour
 {
     protected TcpListener _listener;
-    private readonly List<TcpClient> _clients = new List<TcpClient>();
+    public int objectIndex;
+    public int? hostObjectId;
+    public readonly Dictionary<int, TcpClient> _clients = new Dictionary<int, TcpClient>();
+    public EndPoint hostEndPoint;
 
     // ソケット接続準備、待機
     protected void BeginListen(string host, int port)
     {
-        Debug.Log("ipAddress:" + host + " port:" + port);
+        ServerDebugLog("ipAddress:" + host + " port:" + port);
         var ip = IPAddress.Parse(host);
         _listener = new TcpListener(ip, port);
         _listener.Start();
         _listener.BeginAcceptSocket(DoAcceptTcpClientCallback, _listener);
+        objectIndex = 0;
+        hostObjectId = null;
     }
     protected void StopListen()
     {
+        if (_listener == null)
+        {
+            return;
+        }
+
+        if (_clients.Count != 0)
+        {
+            foreach (var client in _clients.Values)
+            {
+                client.Close();
+            }
+        }
+
+        _clients.Clear();
         _listener.Stop();
         _listener = null;
+        objectIndex = 0;
+        hostObjectId = null;
     }
-
+    void AddClient(TcpClient client)
+    {
+        _clients.Add(objectIndex, client);
+        objectIndex++;
+    }
     // クライアントからの接続処理
     private void DoAcceptTcpClientCallback(IAsyncResult ar)
     {
         var listener = (TcpListener)ar.AsyncState;
         var client = listener.EndAcceptTcpClient(ar);
-        _clients.Add(client);
-        Debug.Log("New Connect: " + client.Client.RemoteEndPoint);
+
+        ServerDebugLog("New Connect: " + client.Client.RemoteEndPoint);
 
         // 接続が確立したら次の人を受け付ける
         listener.BeginAcceptSocket(DoAcceptTcpClientCallback, listener);
@@ -51,7 +77,7 @@ public class SocketServerBase : MonoBehaviour
         // 接続が切れるまで送受信を繰り返す
         while (client.Connected)
         {
-            Debug.Log("client is connecting " + client.Client.RemoteEndPoint);
+            ServerDebugLog("client is connecting " + client.Client.RemoteEndPoint);
             // while (!reader.EndOfStream)
             // {
             //     // 一行分の文字列を受け取る
@@ -62,27 +88,54 @@ public class SocketServerBase : MonoBehaviour
             byte[] bytes = new byte[256];
             client.Client.Receive(bytes);
             string s = Encoding.UTF8.GetString(bytes);
-            OnMessage(s);
+            OnMessage(s, client);
 
             // クライアントの接続が切れたら
             if (client.Client.Poll(1000, SelectMode.SelectRead) && (client.Client.Available == 0))
             {
-                Debug.Log("Disconnect: " + client.Client.RemoteEndPoint);
+                ServerDebugLog("Disconnect: " + client.Client.RemoteEndPoint);
                 client.Close();
-                _clients.Remove(client);
+
+                var ids = _clients.Keys.ToArray();
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    if (_clients[ids[i]] == client)
+                    {
+                        _clients.Remove(ids[i]);
+                        break;
+                    }
+                }
+
                 break;
             }
         }
+
     }
 
+
     // メッセージ受信
-    protected virtual void OnMessage(string msg)
+    protected virtual void OnMessage(string msg, TcpClient client)
     {
-        Debug.Log(msg);
+        ServerDebugLog("OnMessage" + msg);
     }
 
     // クライアントにメッセージ送信
-    protected void SendMessageToClient(string msg)
+    List<int> removeList = new List<int>();
+    protected void SendMessageToClient(string msg, TcpClient client)
+    {
+        var body = Encoding.UTF8.GetBytes(msg);
+
+        try
+        {
+            var stream = client.GetStream();
+            stream.Write(body, 0, body.Length);
+        }
+        catch
+        {
+            ServerDebugLog("Failder send msg");
+        }
+    }
+    protected void SendMessageToClientAll(string msg)
     {
         if (_clients.Count == 0)
         {
@@ -91,16 +144,37 @@ public class SocketServerBase : MonoBehaviour
         var body = Encoding.UTF8.GetBytes(msg);
 
         // 全員に同じメッセージを送る
-        foreach (var client in _clients)
+        foreach (var id in _clients.Keys)
         {
             try
             {
-                var stream = client.GetStream();
+                var stream = _clients[id].GetStream();
                 stream.Write(body, 0, body.Length);
             }
             catch
             {
-                _clients.Remove(client);
+                removeList.Add(id);
+            }
+        }
+
+        if (removeList.Count != 0)
+        {
+            bool containHost = false;
+
+            foreach (var id in removeList)
+            {
+                _clients.Remove(id);
+
+                if (id == hostObjectId)
+                {
+                    containHost = true;
+                }
+            }
+            removeList.Clear();
+
+            if (containHost)
+            {
+                StopListen();
             }
         }
     }
@@ -108,19 +182,7 @@ public class SocketServerBase : MonoBehaviour
     // 終了処理
     protected virtual void OnApplicationQuit()
     {
-        if (_listener == null)
-        {
-            return;
-        }
-
-        if (_clients.Count != 0)
-        {
-            foreach (var client in _clients)
-            {
-                client.Close();
-            }
-        }
-        _listener.Stop();
+        StopListen();
     }
 
     public static string GetLocalIPAddress()
@@ -135,5 +197,9 @@ public class SocketServerBase : MonoBehaviour
         }
 
         throw new System.Exception("No network adapters with an IPv4 address in the system!");
+    }
+    public static void ServerDebugLog(string str)
+    {
+        Debug.Log("<color=yellow>ServerLog</color>" + str);
     }
 }

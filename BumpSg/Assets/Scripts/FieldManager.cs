@@ -4,13 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 public enum GameState
 {
+    Title,
     Ready,
     Play,
     Goal,
 }
 public partial class FieldManager : MonoBehaviour
 {
+    public static bool IsHost;
+    public static int playerId;
     public bool IsInifinityLineMode;
+    public GameServer gameServer;
     static FieldManager _instance;
     public static FieldManager GetInstance()
     {
@@ -91,6 +95,7 @@ public partial class FieldManager : MonoBehaviour
     void Awake()
     {
         SetupInstace();
+        gameServer.InitializeGameServer();
 
         if (targetCamera == null)
         {
@@ -103,11 +108,14 @@ public partial class FieldManager : MonoBehaviour
 
         UpdateGameState(GameState.Ready);
         fieldMenu.Setup(targetCamera);
+        fieldMenu.SetupAsTitle();
     }
     void Update()
     {
         switch (gameState)
         {
+            case GameState.Title:
+                break;
             case GameState.Ready:
                 break;
             case GameState.Play:
@@ -124,6 +132,9 @@ public partial class FieldManager : MonoBehaviour
 
         switch (gameState)
         {
+            case GameState.Title:
+                fieldMenu.SetupAsTitle();
+                break;
             case GameState.Ready:
                 fieldMenu.SetupAsReady();
                 break;

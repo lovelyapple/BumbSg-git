@@ -5,7 +5,12 @@ using UnityEngine;
 [Serializable]
 public enum ProtocolType
 {
+    C2A_RegisterHost,
+    A2C_RegisterHost,
+    C2A_RegisterClient,
+    A2C_RegisterClient,
     SimpleMsg,
+    Position,
 }
 [Serializable]
 public class ProtocolItem
@@ -19,6 +24,7 @@ public class ProtocolItem
     public float floatParam_1;
     public float floatParam_2;
     public string stringParam;
+    public bool boolParam;
 }
 public class ProtocolMaker
 {
@@ -28,6 +34,38 @@ public class ProtocolMaker
         item.sendFrom = sendFrom;
         item.stringParam = msg;
         item.msgType = ProtocolType.SimpleMsg;
+        return item;
+    }
+    public static ProtocolItem Mk_Position(int sendFrom, Vector3 vector)
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.sendFrom = sendFrom;
+        item.vectorParam_1 = vector;
+        item.msgType = ProtocolType.Position;
+        return item;
+    }
+    public static ProtocolItem Mk_C2A_RegisterHost()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.C2A_RegisterHost;
+        return item;
+    }
+    public static ProtocolItem Mk_A2C_RegisterHost()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.C2A_RegisterHost;
+        return item;
+    }
+    public static ProtocolItem Mk_C2A_RegisterClient()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.C2A_RegisterClient;
+        return item;
+    }
+    public static ProtocolItem Mk_A2C_RegisterClient()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.A2C_RegisterClient;
         return item;
     }
     public static ProtocolItem MakeToJson(string obj)
@@ -40,13 +78,17 @@ public class ProtocolMaker
         return JsonUtility.ToJson(item);
     }
 
-    public static void DeserializeProtocol(ProtocolItem item)
+    public static void DebugDeserializeProtocol(ProtocolItem item)
     {
         switch (item.msgType)
         {
             case ProtocolType.SimpleMsg:
                 Debug.Log("DeserializeProtocol" + item.sendFrom + " " + item.stringParam);
                 break;
+            case ProtocolType.Position:
+                Debug.Log("DeserializeProtocol" + item.sendFrom + " " + item.vectorParam_1);
+                break;
+
         }
     }
 }
