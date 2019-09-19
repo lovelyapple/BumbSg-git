@@ -7,30 +7,50 @@ using UnityEngine.UI;
 public partial class UIFieldMenu
 {
     [SerializeField] Text isServerStartedLabel;
+    [SerializeField] Text gameStartButtonLabel;
     Coroutine waitForRegisterCoroutine;
+    bool selfReady;
     void UpdateReady()
     {
 
-        if (!SocketClientBase.GetInstance().ClientObjectID.HasValue && waitForRegisterCoroutine == null)
+        if (FieldManager.IsHost && !SocketClientBase.GetInstance().SelfClientObjectID.HasValue && waitForRegisterCoroutine == null)
         {
-            waitForRegisterCoroutine = StartCoroutine(RegisterIenumerator());
+            waitForRegisterCoroutine = StartCoroutine(AutoRegisterHostIenumerator());
         }
-    }
-    IEnumerator RegisterIenumerator()
-    {
-        var client = SocketClientBase.GetInstance();
-
-        Debug.Log("RegisterIenumerator as Host " + FieldManager.IsHost);
 
         if (FieldManager.IsHost)
         {
-            while (!GameServer.IsServerStarted())
+            if(selfReady)
             {
-                yield return null;
+                gameStartButtonLabel.text = SocketClientBase.GetInstance().EnemyClientObjectID.HasValue ? "Start" : "WaitForPlayers";
             }
-
-            Debug.Log("RegisterIenumerator IsServerStarted ");
+            else
+            {
+                gameStartButtonLabel.text =  "Crea";
+            }
+            
         }
+        else
+        {
+            gameStartButtonLabel.text = SocketClientBase.GetInstance().EnemyClientObjectID.HasValue ? "Start" : "WaitForPlayers";
+        }
+    }
+    IEnumerator AutoRegisterHostIenumerator()
+    {
+        selfReady = false;
+        var client = SocketClientBase.GetInstance();
+
+        Debug.Log("AutoRegisterHostIenumerator as Host ");
+
+
+        while (!GameServer.IsServerStarted())
+        {
+            yield return null;
+        }
+
+        Debug.Log("AutoRegisterHostIenumerator IsServerStarted ");
+        yield return new WaitForSeconds(0.1f);
+
 
         client.ConnectToServer(ipLabel.text);
 
@@ -39,24 +59,49 @@ public partial class UIFieldMenu
             yield return null;
         }
 
-        Debug.Log("RegisterIenumerator Client.Connected ");
+        Debug.Log("AutoRegisterHostIenumerator Client.Connected ");
+        yield return new WaitForSeconds(0.1f);
 
-        if (FieldManager.IsHost)
-        {
-            SocketClientBase.GetInstance().C2A_RegisterAsHost();
-        }
-        else
-        {
-            SocketClientBase.GetInstance().C2A_RegisterAsClient();
-        }
 
-        while (!SocketClientBase.GetInstance().ClientObjectID.HasValue)
+        SocketClientBase.GetInstance().C2A_RegisterAsHost();
+
+
+        while (!SocketClientBase.GetInstance().SelfClientObjectID.HasValue)
         {
             yield return null;
         }
 
-        Debug.Log("Got ObjectID " + SocketClientBase.GetInstance().ClientObjectID + " As Host " + FieldManager.IsHost);
+        Debug.Log("Got ObjectID " + SocketClientBase.GetInstance().SelfClientObjectID + " As Host");
 
         waitForRegisterCoroutine = null;
+        selfReady = true;
+    }
+    IEnumerator ManualRegisterClientIenumerator()
+    {
+        selfReady = false;
+        var client = SocketClientBase.GetInstance();
+        Debug.Log("ManualRegisterClientIenumerator as Client ");
+
+        client.ConnectToServer(ipInputField.text);
+
+        while (client.Client == null && !client.Client.Connected)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        Debug.Log("ManualRegisterClientIenumerator Client.Connected ");
+
+        SocketClientBase.GetInstance().C2A_RegisterAsClient();
+
+        while (!SocketClientBase.GetInstance().SelfClientObjectID.HasValue)
+        {
+            yield return null;
+        }
+
+        Debug.Log("Got ObjectID " + SocketClientBase.GetInstance().SelfClientObjectID + " As Client");
+        waitForRegisterCoroutine = null;
+        selfReady = true;
     }
 }

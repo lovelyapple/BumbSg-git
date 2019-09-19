@@ -58,6 +58,7 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void SetupAsTitle()
     {
+        selfReady = false;
         ipLabel.text = GameServer.GetLocalIPAddress();
         portLabel.text = GameServer.GetInstance().Port.ToString();
         titleRootObj.SetActive(true);

@@ -15,7 +15,8 @@ public partial class SocketClientBase : MonoBehaviour
     bool isForceStop = false;
     bool isStopReading = false;
     public bool IsGameHost;
-    public int? ClientObjectID;
+    public int? SelfClientObjectID;
+    public int? EnemyClientObjectID;
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
@@ -36,6 +37,9 @@ public partial class SocketClientBase : MonoBehaviour
     public void ConnectToServer(string ip)
     {
         serverIp = ip;
+        SelfClientObjectID = null;
+        EnemyClientObjectID = null;
+
         ClientBaseDebugLog("Try to connect to ip " + ip + " port " + serverPort);
         Client = new TcpClient(serverIp, serverPort);
 
@@ -47,21 +51,9 @@ public partial class SocketClientBase : MonoBehaviour
         stream = Client.GetStream();
         streamReadingCoroutine = StartCoroutine(StartReading());
     }
-    void OnDisable()
-    {
-        if (streamReadingCoroutine != null)
-        {
-            StopCoroutine(streamReadingCoroutine);
-        }
-        streamReadingCoroutine = null;
-    }
     void OnDestroy()
     {
-        if (Client != null && Client.Client != null)
-        {
-            Client.Client.Close();
-            Client = null;
-        }
+        StopClient();
     }
     public void StopClient()
     {
@@ -77,7 +69,8 @@ public partial class SocketClientBase : MonoBehaviour
             Client.Client.Close();
         }
 
-        ClientObjectID = null;
+        SelfClientObjectID = null;
+        EnemyClientObjectID = null;
 
         ClientBaseDebugLog("Client stoped");
     }

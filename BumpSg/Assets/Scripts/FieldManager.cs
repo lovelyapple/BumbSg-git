@@ -12,7 +12,6 @@ public enum GameState
 public partial class FieldManager : MonoBehaviour
 {
     public static bool IsHost;
-    public static int playerId;
     public bool IsInifinityLineMode;
     public GameServer gameServer;
     public SocketClientBase gameClient;

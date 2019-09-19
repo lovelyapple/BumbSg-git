@@ -28,7 +28,7 @@ public partial class SocketClientBase
         if (item.boolParam)
         {
             IsGameHost = true;
-            ClientObjectID = item.objectId;
+            SelfClientObjectID = item.objectId;
 
             if (On_A2C_RegisterAsHost != null)
                 On_A2C_RegisterAsHost.Invoke(item);
@@ -56,11 +56,17 @@ public partial class SocketClientBase
         ClientBaseDebugLog("A2C_RegisterAsClient id " + item.objectId + " result " + item.boolParam);
         if (item.boolParam)
         {
-            IsGameHost = false;
-            ClientObjectID = item.objectId;
+            if (!IsGameHost)
+            {
+                SelfClientObjectID = item.objectId;
 
-            if (On_A2C_RegisterAsClient != null)
-                On_A2C_RegisterAsClient.Invoke(item);
+                if (On_A2C_RegisterAsClient != null)
+                    On_A2C_RegisterAsClient.Invoke(item);
+            }
+            else
+            {
+                EnemyClientObjectID = item.objectId;
+            }
         }
     }
 }
