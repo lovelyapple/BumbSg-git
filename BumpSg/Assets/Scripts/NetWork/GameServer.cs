@@ -11,8 +11,8 @@ public class GameServer : SocketServerBase
 {
 #pragma warning disable 0649
     // ポート指定（他で使用していないもの、使用されていたら手元の環境によって変更）
-    [SerializeField] private int _port;
-    public static string localServerIp;
+    public string ServerIp;
+    public int Port;
 #pragma warning restore 0649
     static GameServer _instance;
     public static GameServer GetInstance()
@@ -27,13 +27,13 @@ public class GameServer : SocketServerBase
     {
         _instance = this;
         // 接続中のIPアドレスを取得
-        localServerIp = GetLocalIPAddress();
+        ServerIp = GetLocalIPAddress();
     }
     public void StartServer()
     {
 
         // 指定したポートを開く
-        BeginListen(localServerIp, _port);
+        BeginListen(ServerIp, Port);
     }
     public void StopServer()
     {

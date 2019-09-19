@@ -36,7 +36,7 @@ public partial class UIFieldMenu : MonoBehaviour
         {
             return;
         }
-
+        isServerStartedLabel.gameObject.SetActive(GameServer.IsServerStarted());
         switch (FieldManager.GetInstance().gameState)
         {
             case GameState.Title:
@@ -59,6 +59,7 @@ public partial class UIFieldMenu : MonoBehaviour
     public void SetupAsTitle()
     {
         ipLabel.text = GameServer.GetLocalIPAddress();
+        portLabel.text = GameServer.GetInstance().Port.ToString();
         titleRootObj.SetActive(true);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
@@ -105,5 +106,11 @@ public partial class UIFieldMenu : MonoBehaviour
         SocketClientBase.GetInstance().StopClient();
         FieldManager.GetInstance().UpdateGameState(GameState.Title);
         FieldManager.IsHost = false;
+
+        if(waitForRegisterCoroutine != null)
+        {
+            StopCoroutine(waitForRegisterCoroutine);
+        }
+        waitForRegisterCoroutine = null;
     }
 }

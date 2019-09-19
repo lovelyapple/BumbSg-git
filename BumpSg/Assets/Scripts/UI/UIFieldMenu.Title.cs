@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public partial class UIFieldMenu
 {
     [SerializeField] Text ipLabel;
+    [SerializeField] Text portLabel;
     [SerializeField] InputField ipInputField;
     void UpdateTitle()
     {

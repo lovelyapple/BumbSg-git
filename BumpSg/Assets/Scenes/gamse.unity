@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1695,7 +1695,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectIndex: 0
-  _port: 8080
+  ServerIp: 
+  Port: 50001
 --- !u!4 &1280899040
 Transform:
   m_ObjectHideFlags: 0
@@ -1724,7 +1725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsGameHost: 0
   serverIp: 
-  serverPort: 8080
+  serverPort: 50001
 --- !u!1 &1282484767
 GameObject:
   m_ObjectHideFlags: 0
@@ -1805,7 +1806,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1283038708}
-        m_MethodName: OnClickStart
+        m_MethodName: OnClickStopServerInReady
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1963,6 +1964,7 @@ MonoBehaviour:
   targetCamera: {fileID: 0}
   isServerStartedLabel: {fileID: 1319596246}
   ipLabel: {fileID: 1877941535}
+  portLabel: {fileID: 1929852205}
   ipInputField: {fileID: 1407805896}
 --- !u!224 &1283038709
 RectTransform:
@@ -2545,8 +2547,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 353, y: 362}
-  m_SizeDelta: {x: 500, y: 200}
+  m_AnchoredPosition: {x: 238, y: 237}
+  m_SizeDelta: {x: 650, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1692382460
 MonoBehaviour:
@@ -3296,7 +3298,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 8080
+  m_Text: 50001
 --- !u!222 &1929852206
 CanvasRenderer:
   m_ObjectHideFlags: 0

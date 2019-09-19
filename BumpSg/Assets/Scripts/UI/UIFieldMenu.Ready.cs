@@ -10,7 +10,6 @@ public partial class UIFieldMenu
     Coroutine waitForRegisterCoroutine;
     void UpdateReady()
     {
-        isServerStartedLabel.gameObject.SetActive(GameServer.IsServerStarted());
 
         if (!SocketClientBase.GetInstance().ClientObjectID.HasValue && waitForRegisterCoroutine == null)
         {
@@ -21,12 +20,16 @@ public partial class UIFieldMenu
     {
         var client = SocketClientBase.GetInstance();
 
+        Debug.Log("RegisterIenumerator as Host " + FieldManager.IsHost);
+
         if (FieldManager.IsHost)
         {
             while (!GameServer.IsServerStarted())
             {
                 yield return null;
             }
+
+            Debug.Log("RegisterIenumerator IsServerStarted ");
         }
 
         client.ConnectToServer(ipLabel.text);
@@ -35,6 +38,8 @@ public partial class UIFieldMenu
         {
             yield return null;
         }
+
+        Debug.Log("RegisterIenumerator Client.Connected ");
 
         if (FieldManager.IsHost)
         {
