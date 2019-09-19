@@ -8,11 +8,14 @@ using System;
 
 public partial class SocketClientBase : MonoBehaviour
 {
-    TcpClient client;
+    static SocketClientBase _instance;
+    public TcpClient Client { get; private set; }
     NetworkStream stream;
     byte[] readbuf = new byte[1024];
     bool isForceStop = false;
     bool isStopReading = false;
+    public bool IsGameHost;
+    public int? ClientObjectID;
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
@@ -22,16 +25,26 @@ public partial class SocketClientBase : MonoBehaviour
     //     return;
     // }
     //serverIp = GameServer.localServerIp;
-    public void ConnectToServer()
+    public void InitializeGameClient()
     {
-        client = new TcpClient(serverIp, serverPort);
+        _instance = this;
+    }
+    public static SocketClientBase GetInstance()
+    {
+        return _instance;
+    }
+    public void ConnectToServer(string ip)
+    {
+        serverIp = ip;
+        ClientBaseDebugLog("Try to connect to ip " + ip + " port " + serverPort);
+        Client = new TcpClient(serverIp, serverPort);
 
-        if (client == null)
+        if (Client == null)
         {
             return;
         }
 
-        stream = client.GetStream();
+        stream = Client.GetStream();
         streamReadingCoroutine = StartCoroutine(StartReading());
     }
     void OnDisable()
@@ -44,16 +57,34 @@ public partial class SocketClientBase : MonoBehaviour
     }
     void OnDestroy()
     {
-        if (client != null && client.Client != null)
+        if (Client != null && Client.Client != null)
         {
-            client.Client.Close();
-            client = null;
+            Client.Client.Close();
+            Client = null;
         }
+    }
+    public void StopClient()
+    {
+        if (streamReadingCoroutine != null)
+        {
+            StopCoroutine(streamReadingCoroutine);
+        }
+
+        streamReadingCoroutine = null;
+
+        if (Client != null && Client.Client != null)
+        {
+            Client.Client.Close();
+        }
+
+        ClientObjectID = null;
+
+        ClientBaseDebugLog("Client stoped");
     }
 
     private IEnumerator StartReading()
     {
-        Debug.Log("START START");
+        ClientBaseDebugLog("START Reading!");
         readbuf = new byte[1024];
 
         while (!isForceStop)
@@ -80,13 +111,23 @@ public partial class SocketClientBase : MonoBehaviour
         int bytes = stream.EndRead(ar);
         string message = enc.GetString(readbuf, 0, bytes);
         message = message.Replace("\r", "").Replace("\n", "");
-        Debug.Log("ReadCallback " + message);
+        ClientBaseDebugLog("ReadCallback " + message);
 
         var item = ProtocolMaker.MakeToJson(message);
 
         if (item != null)
         {
             ProtocolMaker.DebugDeserializeProtocol(item);
+
+            switch (item.msgType)
+            {
+                case ProtocolType.A2C_RegisterHost:
+                    A2C_RegisterAsHost(item);
+                    break;
+                case ProtocolType.A2C_RegisterClient:
+                    A2C_RegisterAsClient(item);
+                    break;
+            }
         }
 
         isStopReading = false;
@@ -98,4 +139,8 @@ public partial class SocketClientBase : MonoBehaviour
         return encoding.GetBytes(str);
     }
 
+    void ClientBaseDebugLog(string str)
+    {
+        Debug.Log("<color=white>ClientLog</color>" + str);
+    }
 }

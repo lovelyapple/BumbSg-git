@@ -53,6 +53,7 @@ public class SocketServerBase : MonoBehaviour
         _listener = null;
         objectIndex = 0;
         hostObjectId = null;
+        ServerDebugLog("Stop Server");
     }
     void AddClient(TcpClient client)
     {

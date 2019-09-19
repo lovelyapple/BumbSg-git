@@ -15,6 +15,7 @@ public partial class FieldManager : MonoBehaviour
     public static int playerId;
     public bool IsInifinityLineMode;
     public GameServer gameServer;
+    public SocketClientBase gameClient;
     static FieldManager _instance;
     public static FieldManager GetInstance()
     {
@@ -96,6 +97,7 @@ public partial class FieldManager : MonoBehaviour
     {
         SetupInstace();
         gameServer.InitializeGameServer();
+        gameClient.InitializeGameClient();
 
         if (targetCamera == null)
         {
@@ -106,7 +108,7 @@ public partial class FieldManager : MonoBehaviour
         pos.z = -cameraDepth;
         targetCamera.transform.position = pos;
 
-        UpdateGameState(GameState.Ready);
+        UpdateGameState(GameState.Title);
         fieldMenu.Setup(targetCamera);
         fieldMenu.SetupAsTitle();
     }

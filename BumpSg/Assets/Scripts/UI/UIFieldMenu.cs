@@ -43,6 +43,7 @@ public partial class UIFieldMenu : MonoBehaviour
                 UpdateTitle();
                 break;
             case GameState.Ready:
+                UpdateReady();
                 break;
             case GameState.Play:
                 UpdatePlay();
@@ -94,10 +95,15 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void OnClickStartClientInTitle()
     {
+        GameServer.GetInstance().StopServer();
+        FieldManager.GetInstance().UpdateGameState(GameState.Ready);
         FieldManager.IsHost = false;
     }
     public void OnClickStopServerInReady()
     {
         GameServer.GetInstance().StopServer();
+        SocketClientBase.GetInstance().StopClient();
+        FieldManager.GetInstance().UpdateGameState(GameState.Title);
+        FieldManager.IsHost = false;
     }
 }

@@ -17,14 +17,22 @@ public partial class SocketClientBase
 
         if (stream.CanWrite)
         {
-            Debug.Log("writed RegisterAsHost");
+            ClientBaseDebugLog("writed RegisterAsHost");
             stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
         }
     }
     void A2C_RegisterAsHost(ProtocolItem item)
     {
-        On_A2C_RegisterAsHost.Invoke(item);
+        ClientBaseDebugLog("A2C_RegisterAsHost id " + item.objectId + " result " + item.boolParam);
+        if (item.boolParam)
+        {
+            IsGameHost = true;
+            ClientObjectID = item.objectId;
+
+            if (On_A2C_RegisterAsHost != null)
+                On_A2C_RegisterAsHost.Invoke(item);
+        }
     }
     //
     // Clientとして登録
@@ -38,13 +46,21 @@ public partial class SocketClientBase
 
         if (stream.CanWrite)
         {
-            Debug.Log("writed RegisterAsClient");
+            ClientBaseDebugLog("writed RegisterAsClient");
             stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
         }
     }
     void A2C_RegisterAsClient(ProtocolItem item)
     {
-        On_A2C_RegisterAsClient.Invoke(item);
+        ClientBaseDebugLog("A2C_RegisterAsClient id " + item.objectId + " result " + item.boolParam);
+        if (item.boolParam)
+        {
+            IsGameHost = false;
+            ClientObjectID = item.objectId;
+
+            if (On_A2C_RegisterAsClient != null)
+                On_A2C_RegisterAsClient.Invoke(item);
+        }
     }
 }

@@ -95,7 +95,7 @@ public class GameServer : SocketServerBase
 
                 msg = ProtocolMaker.SerializeToJson(A2C_item_client);
                 // クライアントに受領メッセージを返す
-                SendMessageToClientAll(msg + "¥n");
+                SendMessageToClient(msg + "¥n", client);
                 break;
 
             default:

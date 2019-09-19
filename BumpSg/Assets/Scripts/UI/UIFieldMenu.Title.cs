@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public partial class UIFieldMenu
 {
     [SerializeField] Text ipLabel;
-    [SerializeField] Text isServerStartedLabel;
     [SerializeField] InputField ipInputField;
     void UpdateTitle()
     {
-        isServerStartedLabel.gameObject.SetActive(GameServer.IsServerStarted());
+        
     }
     public string GetInputingIp()
     {
