@@ -42,7 +42,8 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] GameObject linePrefab;
     [SerializeField] LineController creatingLine;
     [SerializeField] LineController selectedLine;
-    int _lineLeft = 4;
+    public int lineLeftMax = 8;
+    int _lineLeft = 8;
     public int LineLeft
     {
         get
@@ -66,6 +67,7 @@ public partial class FieldManager : MonoBehaviour
             {
                 _lineLeft = 10;
             }
+
             if (value <= 0)
             {
                 _lineLeft = 0;
@@ -104,6 +106,7 @@ public partial class FieldManager : MonoBehaviour
             targetCamera = Camera.main;
         }
 
+        _lineLeft = lineLeftMax;
         UpdateGameState(GameState.Title);
         fieldMenu.Setup(targetCamera);
         fieldMenu.SetupAsTitle();
@@ -169,6 +172,7 @@ public partial class FieldManager : MonoBehaviour
                 break;
             case GameState.Play:
                 ball.gameObject.SetActive(true);
+                ClearAllLine();
 
                 try
                 {
@@ -213,6 +217,31 @@ public partial class FieldManager : MonoBehaviour
         }
 
         return null;
+    }
+    public void ClearAllLine()
+    {
+        foreach (var l in selfLineList)
+        {
+            if (l != null)
+                Destroy(l.gameObject);
+        }
+
+        selfLineList.Clear();
+
+        if (creatingLine != null)
+        {
+            Destroy(creatingLine.gameObject);
+            creatingLine = null;
+        }
+
+        if (selectedLine != null)
+        {
+            Destroy(selectedLine.gameObject);
+            selectedLine = null;
+        }
+
+        _lineLeft = lineLeftMax;
+        fieldMenu.UpdateLineLeftAmount(_lineLeft);
     }
     public void RemoveLine(LineController line)
     {

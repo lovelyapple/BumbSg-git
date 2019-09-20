@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5088059df99a4cb2b61ba88ca5eb2da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsInifinityLineMode: 1
+  IsInifinityLineMode: 0
   gameServer: {fileID: 1280899039}
   gameClient: {fileID: 1280899041}
   fieldMenu: {fileID: 1283038708}
@@ -637,6 +637,7 @@ MonoBehaviour:
     type: 3}
   creatingLine: {fileID: 0}
   selectedLine: {fileID: 0}
+  lineLeftMax: 8
   selfLineList: []
   ballPrefab: {fileID: 694975396, guid: 95dce4b053d5a40da89e077d3cf94b74, type: 3}
   ballStartPosition: {x: 0, y: 5, z: 0}

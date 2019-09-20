@@ -13,6 +13,7 @@ public class LineController : MonoBehaviour
     [SerializeField] List<PowerColor> powerColors;
     [SerializeField] Renderer lineRender;
     [SerializeField] Collider bodyCol;
+    public float lifeTime = 30f;
     public bool IsDead;
     public float PowerUpPerRow = 0.1f;
     public float PowerUpStrength = 1.1f;
@@ -85,6 +86,16 @@ public class LineController : MonoBehaviour
     }
     void Update()
     {
+        if(lifeTime > 0)
+        {
+            lifeTime -= Time.deltaTime;
+
+            if(lifeTime <=0)
+            {
+                IsDead = true;
+            }
+        }
+
         if (!IsDead)
         {
             deadEffectTime = 0;

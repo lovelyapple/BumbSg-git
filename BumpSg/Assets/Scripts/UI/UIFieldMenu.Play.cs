@@ -57,7 +57,7 @@ public partial class UIFieldMenu
 
         if (leftTmp > 0)
         {
-            lineLeftLabel.text = "x" + leftTmp;
+            lineLeftLabel.text = "+" + leftTmp;
         }
         else
         {
