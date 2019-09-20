@@ -1932,7 +1932,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9d44d10084a346258c949085cbaa10e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsGameHost: 0
   serverIp: 
   serverPort: 50001
 --- !u!1 &1282484767
@@ -2171,6 +2170,7 @@ MonoBehaviour:
   ballPanelPos: {x: 0, y: 0, z: 0}
   ballTransform: {fileID: 0}
   targetCamera: {fileID: 0}
+  StopServerButtonObj: {fileID: 1282484767}
   isServerStartedLabel: {fileID: 1319596246}
   gameStartButtonLabel: {fileID: 866641987}
   ipLabel: {fileID: 1877941535}
