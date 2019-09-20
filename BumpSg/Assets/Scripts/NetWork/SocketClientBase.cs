@@ -133,6 +133,7 @@ public partial class SocketClientBase : MonoBehaviour
                     A2C_UpdateClientInfo(item);
                     break;
                 case ProtocolType.A2C_ResponseStartGame:
+                    A2C_ResponseStartGame();
                     break;
             }
         }

@@ -105,13 +105,4 @@ public partial class UIFieldMenu
         waitForRegisterCoroutine = null;
         selfReady = true;
     }
-    public void OnClickStartGame()
-    {
-        if(!SocketClientBase.IsGameHost || !SocketClientBase.GetInstance().HostClientObjectID.HasValue || !SocketClientBase.GetInstance().GuestClientObjectID.HasValue)
-        {
-            return;
-        }
-
-        SocketClientBase.GetInstance().C2A_RequestStartGame();
-    }
 }

@@ -70,6 +70,6 @@ public partial class SocketClientBase
     }
     public void A2C_ResponseStartGame()
     {
-        FieldManager.GetInstance().UpdateGameState(GameState.Play);
+        FieldManager.GetInstance().RequestUpdateGameStateAsync(GameState.Play);
     }
 }

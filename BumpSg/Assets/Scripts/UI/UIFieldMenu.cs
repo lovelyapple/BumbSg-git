@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public partial class UIFieldMenu : MonoBehaviour
 {
     [SerializeField] RectTransform fieldMenuTransform;
+    [SerializeField] GameObject ipConfigInfoRootObj;
     [SerializeField] GameObject titleRootObj;
     [SerializeField] GameObject readyRootObj;
     [SerializeField] GameObject playRootObj;
@@ -61,6 +62,7 @@ public partial class UIFieldMenu : MonoBehaviour
         selfReady = false;
         ipLabel.text = GameServer.GetLocalIPAddress();
         portLabel.text = GameServer.GetInstance().Port.ToString();
+        ipConfigInfoRootObj.SetActive(true);
         titleRootObj.SetActive(true);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
@@ -70,6 +72,7 @@ public partial class UIFieldMenu : MonoBehaviour
     public void SetupAsReady()
     {
         StopServerButtonObj.SetActive(SocketClientBase.IsGameHost);
+        ipConfigInfoRootObj.SetActive(true);
         titleRootObj.SetActive(false);
         readyRootObj.SetActive(true);
         playRootObj.SetActive(false);
@@ -77,6 +80,8 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void SetupAsPlay(Transform ballTransform)
     {
+        Debug.Log("SetupAsPlay");
+        ipConfigInfoRootObj.SetActive(false);
         titleRootObj.SetActive(false);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(true);
@@ -85,6 +90,7 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void SetupAsGoal()
     {
+        ipConfigInfoRootObj.SetActive(false);
         titleRootObj.SetActive(false);
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
@@ -123,5 +129,14 @@ public partial class UIFieldMenu : MonoBehaviour
             StopCoroutine(waitForRegisterCoroutine);
         }
         waitForRegisterCoroutine = null;
+    }
+    public void OnClickStartGameInReady()
+    {
+        if (!SocketClientBase.IsGameHost || !SocketClientBase.GetInstance().HostClientObjectID.HasValue || !SocketClientBase.GetInstance().GuestClientObjectID.HasValue)
+        {
+            //return;
+        }
+
+        SocketClientBase.GetInstance().C2A_RequestStartGame();
     }
 }

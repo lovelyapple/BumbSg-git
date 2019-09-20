@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 public enum GameState
 {
-    Title,
-    Ready,
-    Play,
-    Goal,
+    Title = 1,
+    Ready = 2,
+    Play = 3,
+    Goal = 4,
 }
 public partial class FieldManager : MonoBehaviour
 {
@@ -90,6 +90,8 @@ public partial class FieldManager : MonoBehaviour
     bool isChargeMode;
     bool nextChargePointIsStart;
     public GameState gameState;
+    public GameState requestingState;
+    public bool needChangeState;
     public Action<int> onUpdateLineLeftAcount;
     void Awake()
     {
@@ -112,9 +114,27 @@ public partial class FieldManager : MonoBehaviour
     }
     void Update()
     {
+        if (!needChangeState && requestingState != gameState)
+        {
+            needChangeState = true;
+            return;
+        }
+
+        if(needChangeState)
+        {
+            UpdateGameState(requestingState);
+        }
+
         switch (gameState)
         {
             case GameState.Title:
+                if (ball == null)
+                {
+                    ball = Instantiate(ballPrefab.gameObject, ballStartPosition, Quaternion.identity).GetComponent<BallController>();
+                    ball.OnBallFallingInToHole = OnBallFallInToHole;
+                }
+
+                ball.gameObject.SetActive(false);
                 break;
             case GameState.Ready:
                 break;
@@ -126,9 +146,15 @@ public partial class FieldManager : MonoBehaviour
                 break;
         }
     }
+    public void RequestUpdateGameStateAsync(GameState state)
+    {
+        requestingState = state;
+    }
     public void UpdateGameState(GameState state)
     {
         this.gameState = state;
+        requestingState = gameState;
+        needChangeState = false;
 
         switch (gameState)
         {
@@ -139,13 +165,15 @@ public partial class FieldManager : MonoBehaviour
                 fieldMenu.SetupAsReady();
                 break;
             case GameState.Play:
-                if (ball == null)
+                ball.gameObject.SetActive(true);
+                try
                 {
-                    ball = Instantiate(ballPrefab, ballStartPosition, Quaternion.identity);
-                    ball.OnBallFallingInToHole = OnBallFallInToHole;
+                    fieldMenu.SetupAsPlay(ball.gameObject.transform);
                 }
-
-                fieldMenu.SetupAsPlay(ball.gameObject.transform);
+                catch
+                {
+                    Debug.LogError("fieldMenu.SetupAsPlay(ball.gameObject.transform);");
+                }
                 break;
             case GameState.Goal:
                 fieldMenu.SetupAsGoal();

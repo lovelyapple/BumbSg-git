@@ -482,7 +482,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1283038708}
-        m_MethodName: OnClickStopServerInReady
+        m_MethodName: OnClickStartGameInReady
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -578,6 +578,7 @@ MonoBehaviour:
   lineDepth: 0.5
   lastMousePointGet: {x: 0, y: 0, z: 0}
   gameState: 0
+  debugRequestState: 0
   wallDesappearEffect: {fileID: 0}
   targetCameraPos: {x: 0, y: 0, z: 0}
   cameraMoveSpeed: 20
@@ -2156,6 +2157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldMenuTransform: {fileID: 1283038709}
+  ipConfigInfoRootObj: {fileID: 1692382458}
   titleRootObj: {fileID: 1884064081}
   readyRootObj: {fileID: 239565429}
   playRootObj: {fileID: 1032619676}
