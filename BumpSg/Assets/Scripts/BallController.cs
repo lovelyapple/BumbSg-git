@@ -16,6 +16,10 @@ public class BallController : MonoBehaviour
     public float HoleFallInTime = 2f;
     public float HoleFallInTimeLeft;
     Vector3 holePosition;
+    public bool remoteRequestingAddForce;
+    public Vector3 remoteAddForceDir;
+    public Vector3 remoteAddForcePos;
+    public Vector3 remoteAddForceVelocity;
     public Action<BallController> OnBallFallingInToHole;
     void Awake()
     {
@@ -54,6 +58,16 @@ public class BallController : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            if (remoteRequestingAddForce)
+            {
+                transform.position = remoteAddForcePos;
+                ballRigidbody.velocity = remoteAddForceVelocity;
+                ballRigidbody.AddForce(remoteAddForceDir, ForceMode.Impulse);
+                remoteRequestingAddForce = false;
+            }
+        }
     }
     public void PowerUp(float powerUpRate)
     {
@@ -81,7 +95,16 @@ public class BallController : MonoBehaviour
         var dir = currentPos - beforePos;
         dir.z = 0;
         dir *= powerUpForcePower;
+
+        SocketClientBase.GetInstance().C2A_AddForceToBall(SocketClientBase.GetInstance().SelfClientObjectID.Value, dir, currentPos, ballRigidbody.velocity);
         ballRigidbody.AddForce(dir, ForceMode.Impulse);
+    }
+    public void SetupRemoteAddForece(Vector3 dir, Vector3 pos, Vector3 velocity)
+    {
+        remoteAddForceDir = dir;
+        remoteRequestingAddForce = true;
+        remoteAddForcePos = pos;
+        remoteAddForceVelocity = velocity;
     }
     public void FallIntoHole(HolePoint point)
     {

@@ -109,13 +109,11 @@ public partial class SocketClientBase : MonoBehaviour
         message = message.Replace("\r", "").Replace("\n", "");
         ClientBaseDebugLog("ReadCallback " + message);
 
-        //var item = ProtocolMaker.MakeToJson(message);
-        ClientBaseDebugLog("JsonUtility.FromJson");
         ProtocolItem item = null;
+
         try
         {
             item = JsonUtility.FromJson<ProtocolItem>(message);
-            ClientBaseDebugLog("item != null " + (item != null).ToString());
         }
         catch
         {
@@ -125,8 +123,6 @@ public partial class SocketClientBase : MonoBehaviour
         if (item != null)
         {
             // ProtocolMaker.DebugDeserializeProtocol(item);
-
-            ClientBaseDebugLog(item.msgType.ToString());
             switch ((ProtocolType)item.msgType)
             {
                 case ProtocolType.A2C_UpdateClientInfo:
@@ -134,6 +130,9 @@ public partial class SocketClientBase : MonoBehaviour
                     break;
                 case ProtocolType.A2C_ResponseStartGame:
                     A2C_ResponseStartGame();
+                    break;
+                case ProtocolType.A2C_AddForceToBall:
+                    A2C_AddForceToBall(item);
                     break;
             }
         }

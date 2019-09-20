@@ -121,6 +121,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4c1ab2e519548a1a02aba48e1fd660, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidbody: {fileID: 0}
-  powerUpHeadTime: 0.2
+  ballRigidbody: {fileID: 0}
+  powerUpHeadTime: 0.1
   powerUpForcePower: 1.2
+  endPointForce: 1
+  IsFalling: 0
+  IsBallDead: 0
+  HoleFallInTime: 2
+  HoleFallInTimeLeft: 0
+  remoteRequestingAddForce: 0
+  remoteAddForceDir: {x: 0, y: 0, z: 0}
+  remoteAddForcePos: {x: 0, y: 0, z: 0}

@@ -43,13 +43,23 @@ public class GameServer : SocketServerBase
     // クライアントからメッセージ受信
     protected override void OnMessage(string msg, TcpClient client)
     {
-        base.OnMessage(msg, client);
+        //base.OnMessage(msg, client);
 
         // -------------------------------------------------------------
         // あとは送られてきたメッセージによって何かしたいことを書く
         // -------------------------------------------------------------
+        ProtocolItem item = null;
 
-        var item = ProtocolMaker.MakeToJson(msg);
+        try
+        {
+            item = ProtocolMaker.MakeToJson(msg);
+        }
+        catch
+        {
+            Debug.LogError("ProtocolMaker.MakeToJson(msg); failed" + msg);
+        }
+
+        ServerDebugLog("OnMessage" + item.msgType.ToString());
 
         switch (item.msgType)
         {
@@ -70,6 +80,12 @@ public class GameServer : SocketServerBase
             case ProtocolType.C2A_RequestStartGame:
                 var game_start = ProtocolMaker.Mk_A2C_ResponseStartGame();
                 msg = ProtocolMaker.SerializeToJson(game_start);
+                SendMessageToClientAll(msg);
+                break;
+
+            case ProtocolType.C2A_AddForceToBall:
+                var add_forec = ProtocolMaker.Mk_A2C_AddForceToBall(item);
+                msg = ProtocolMaker.SerializeToJson(add_forec);
                 SendMessageToClientAll(msg);
                 break;
 

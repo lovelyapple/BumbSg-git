@@ -2421,7 +2421,7 @@ MonoBehaviour:
   - {fileID: 616023699}
   ballDirectionObj: {fileID: 681767367}
   ballPanelPos: {x: 0, y: 0, z: 0}
-  soloMode: 0
+  soloMode: 1
   ballTransform: {fileID: 0}
   targetCamera: {fileID: 0}
   StopServerButtonObj: {fileID: 1282484767}

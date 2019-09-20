@@ -13,6 +13,17 @@ public enum ProtocolType
 
     C2A_RequestStartGame = 6,
     A2C_ResponseStartGame = 7,
+
+
+    C2A_AddForceToBall = 8,
+    A2C_AddForceToBall = 9,
+}
+[Serializable]
+public struct vector_3
+{
+    public int x;
+    public int y;
+    public int z;
 }
 [Serializable]
 public class ProtocolItem
@@ -22,8 +33,9 @@ public class ProtocolItem
     public ProtocolType msgType;
     public int objectId_1;
     public int objectId_2;
-    public Vector3 vectorParam_1;
-    public Vector3 vectorParam_2;
+    public vector_3 vectorParam_1;
+    public vector_3 vectorParam_2;
+    public vector_3 vectorParam_3;
     public float floatParam_1;
     public float floatParam_2;
     public string stringParam;
@@ -43,11 +55,28 @@ public class ProtocolMaker
     {
         ProtocolItem item = new ProtocolItem();
         item.sendFrom = sendFrom;
-        item.vectorParam_1 = vector;
+        item.vectorParam_1 = FormartVector3ToVector_3(vector);
         item.msgType = ProtocolType.Position;
         return item;
     }
-
+    public static vector_3 FormartVector3ToVector_3(Vector3 vector)
+    {
+        return new vector_3()
+        {
+            x = (int)Mathf.Floor(vector.x * 1000),
+            y = (int)Mathf.Floor(vector.y * 1000),
+            z = (int)Mathf.Floor(vector.z * 1000),
+        };
+    }
+    public static Vector3 FormartVector_3ToVector3(vector_3 vector)
+    {
+        return new Vector3()
+        {
+            x = vector.x / 1000f,
+            y = vector.y / 1000f,
+            z = vector.z / 1000f,
+        };
+    }
     //
     //　ログイン
     //
@@ -86,6 +115,31 @@ public class ProtocolMaker
         ProtocolItem item = new ProtocolItem();
         item.msgType = ProtocolType.A2C_ResponseStartGame;
         return item;
+    }
+
+    //
+    // Ball
+    //
+    public static ProtocolItem Mk_C2A_AddForceToBall(int sendFrom, Vector3 dir, Vector3 pos, Vector3 velocity)
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.sendFrom = sendFrom;
+        item.msgType = ProtocolType.C2A_AddForceToBall;
+        item.vectorParam_1 = FormartVector3ToVector_3(dir);
+        item.vectorParam_2 = FormartVector3ToVector_3(pos);
+        item.vectorParam_3 = FormartVector3ToVector_3(velocity);
+        // item.vectorParam_1.x = Mathf.Floor(dir.x * 1000) / 1000f;
+        // item.vectorParam_1.y = Mathf.Floor(dir.y * 1000) / 1000f;
+        // item.vectorParam_1.z = Mathf.Floor(dir.z * 1000) / 1000f;
+        // item.vectorParam_2.x = Mathf.Floor(pos.x * 1000) / 1000f;
+        // item.vectorParam_2.y = Mathf.Floor(pos.y * 1000) / 1000f;
+        // item.vectorParam_2.z = Mathf.Floor(pos.z * 1000) / 1000f;
+        return item;
+    }
+    public static ProtocolItem Mk_A2C_AddForceToBall(ProtocolItem c2a_item)
+    {
+        c2a_item.msgType = ProtocolType.A2C_AddForceToBall;
+        return c2a_item;
     }
     //
     // ヘルパー

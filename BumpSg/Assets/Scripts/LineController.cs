@@ -16,6 +16,7 @@ public class LineController : MonoBehaviour
     public bool IsDead;
     public float PowerUpPerRow = 0.1f;
     public float PowerUpStrength = 1.1f;
+    public float PowerUpStrengthLimit = 3.5f;
     [SerializeField] float deadEffectTime;
     [SerializeField] float desppearSpeed;
     [SerializeField] Vector3 defaultScale;
@@ -53,6 +54,7 @@ public class LineController : MonoBehaviour
     public void PowerUpOneRound()
     {
         PowerUpStrength += PowerUpPerRow;
+        PowerUpStrength = Mathf.Clamp(PowerUpStrength, 0, PowerUpStrengthLimit);
         SetupColor();
         Debug.Log(gameObject.name + "power up! " + PowerUpStrength);
     }
@@ -61,7 +63,9 @@ public class LineController : MonoBehaviour
         if (collision.transform.gameObject.tag == "Ball")
         {
             if (PowerUpStrength != 1.0f)
+            {
                 FieldManager.GetInstance().Ball.PowerUp(PowerUpStrength);
+            }
 
             IsDead = true;
             bodyCol.enabled = false;

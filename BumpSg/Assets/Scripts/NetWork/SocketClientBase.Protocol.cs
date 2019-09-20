@@ -43,9 +43,9 @@ public partial class SocketClientBase
     {
         ClientBaseDebugLog("A2C_UpdateClientInfo id " + item.objectId_1 + " result " + item.objectId_2);
         HostClientObjectID = item.objectId_1;
-        GuestClientObjectID = item.objectId_2 >= 0? item.objectId_2 : new int?();
+        GuestClientObjectID = item.objectId_2 >= 0 ? item.objectId_2 : new int?();
 
-        if(IsGameHost)
+        if (IsGameHost)
         {
             SelfClientObjectID = HostClientObjectID;
         }
@@ -70,6 +70,36 @@ public partial class SocketClientBase
     }
     public void A2C_ResponseStartGame()
     {
+        ClientBaseDebugLog("A2C_ResponseStartGame");
         FieldManager.GetInstance().RequestUpdateGameStateAsync(GameState.Play);
+    }
+
+    public void C2A_AddForceToBall(int sendFrom, Vector3 dir, Vector3 pos, Vector3 velocity)
+    {
+
+        var Item = ProtocolMaker.Mk_C2A_AddForceToBall(sendFrom, dir, pos, velocity);
+        var json = ProtocolMaker.SerializeToJson(Item);
+        var bytes = StrToByteArray(json);
+
+        if (stream.CanWrite)
+        {
+            ClientBaseDebugLog("writed C2A_AddForceToBall");
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+        }
+    }
+    public void A2C_AddForceToBall(ProtocolItem item)
+    {
+        ClientBaseDebugLog("A2C_AddForceToBall");
+
+        if (item.sendFrom != SelfClientObjectID)
+        {
+            ClientBaseDebugLog("A2C_AddForceToBall  Excuted!!");
+            FieldManager.GetInstance().Ball.SetupRemoteAddForece(
+                ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_1),
+                ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2),
+                ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_3)
+            );
+        }
     }
 }
