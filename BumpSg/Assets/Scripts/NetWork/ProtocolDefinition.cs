@@ -5,11 +5,14 @@ using UnityEngine;
 [Serializable]
 public enum ProtocolType
 {
-    C2A_RegisterHost = 1,
-    C2A_RegisterClient = 2,
-    A2C_UpdateClientInfo = 3,
-    SimpleMsg = 4,
-    Position = 5,
+    SimpleMsg = 1,
+    Position = 2,
+    C2A_RegisterHost = 3,
+    C2A_RegisterClient = 4,
+    A2C_UpdateClientInfo = 5,
+
+    C2A_RequestStartGame = 6,
+    A2C_ResponseStartGame = 7,
 }
 [Serializable]
 public class ProtocolItem
@@ -68,6 +71,25 @@ public class ProtocolMaker
         item.objectId_2 = guestId;
         return item;
     }
+
+    //
+    // ゲームスタート
+    //
+    public static ProtocolItem Mk_C2A_RequestStartGame()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.C2A_RequestStartGame;
+        return item;
+    }
+    public static ProtocolItem Mk_A2C_ResponseStartGame()
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.A2C_ResponseStartGame;
+        return item;
+    }
+    //
+    // ヘルパー
+    //
     public static ProtocolItem MakeToJson(string obj)
     {
         return JsonUtility.FromJson<ProtocolItem>(obj);

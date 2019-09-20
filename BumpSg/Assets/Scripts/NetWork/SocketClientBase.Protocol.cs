@@ -54,4 +54,22 @@ public partial class SocketClientBase
             SelfClientObjectID = GuestClientObjectID;
         }
     }
+
+    public void C2A_RequestStartGame()
+    {
+        var Item = ProtocolMaker.Mk_C2A_RequestStartGame();
+        var json = ProtocolMaker.SerializeToJson(Item);
+        var bytes = StrToByteArray(json);
+
+        if (stream.CanWrite)
+        {
+            ClientBaseDebugLog("writed C2A_RequestStartGame");
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+        }
+    }
+    public void A2C_ResponseStartGame()
+    {
+        FieldManager.GetInstance().UpdateGameState(GameState.Play);
+    }
 }

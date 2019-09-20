@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public partial class UIFieldMenu
 {
+    [SerializeField] GameObject StopServerButtonObj;
     [SerializeField] Text isServerStartedLabel;
     [SerializeField] Text gameStartButtonLabel;
     Coroutine waitForRegisterCoroutine;
@@ -103,5 +104,14 @@ public partial class UIFieldMenu
         Debug.Log("Got ObjectID " + SocketClientBase.GetInstance().SelfClientObjectID + " As Client");
         waitForRegisterCoroutine = null;
         selfReady = true;
+    }
+    public void OnClickStartGame()
+    {
+        if(!SocketClientBase.IsGameHost || !SocketClientBase.GetInstance().HostClientObjectID.HasValue || !SocketClientBase.GetInstance().GuestClientObjectID.HasValue)
+        {
+            return;
+        }
+
+        SocketClientBase.GetInstance().C2A_RequestStartGame();
     }
 }

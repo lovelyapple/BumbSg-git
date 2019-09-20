@@ -69,6 +69,7 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void SetupAsReady()
     {
+        StopServerButtonObj.SetActive(SocketClientBase.IsGameHost);
         titleRootObj.SetActive(false);
         readyRootObj.SetActive(true);
         playRootObj.SetActive(false);

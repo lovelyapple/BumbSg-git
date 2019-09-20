@@ -66,6 +66,13 @@ public class GameServer : SocketServerBase
                 SendMessageToClientAll(msg);
                 break;
 
+
+            case ProtocolType.C2A_RequestStartGame:
+                var game_start = ProtocolMaker.Mk_A2C_ResponseStartGame();
+                msg = ProtocolMaker.SerializeToJson(game_start);
+                SendMessageToClientAll(msg);
+                break;
+
             default:
                 // クライアントに受領メッセージを返す
                 SendMessageToClientAll(msg);
