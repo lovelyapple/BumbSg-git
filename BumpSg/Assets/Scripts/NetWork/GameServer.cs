@@ -54,7 +54,7 @@ public class GameServer : SocketServerBase
         switch (item.msgType)
         {
             case ProtocolType.C2A_RegisterHost:
-                var A2C_item_host = ProtocolMaker.Mk_C2A_RegisterHost();
+                var A2C_item_host = ProtocolMaker.Mk_A2C_RegisterHost();
 
                 if (hostObjectId.HasValue)
                 {
@@ -76,10 +76,10 @@ public class GameServer : SocketServerBase
                     }
                 }
                 msg = ProtocolMaker.SerializeToJson(A2C_item_host);
-                SendMessageToClient(msg + "¥n", client);
+                SendMessageToClient(msg, client);
                 break;
             case ProtocolType.C2A_RegisterClient:
-                var A2C_item_client = ProtocolMaker.Mk_C2A_RegisterClient();
+                var A2C_item_client = ProtocolMaker.Mk_A2C_RegisterClient();
                 var clientId = GetClientObjectId(client);
 
                 if (clientId < 0)
@@ -95,12 +95,12 @@ public class GameServer : SocketServerBase
 
                 msg = ProtocolMaker.SerializeToJson(A2C_item_client);
                 // クライアントに受領メッセージを返す
-                SendMessageToClientAll(msg + "¥n");
+                SendMessageToClientAll(msg);
                 break;
 
             default:
                 // クライアントに受領メッセージを返す
-                SendMessageToClientAll(msg + "¥n");
+                SendMessageToClientAll(msg);
                 break;
         }
 

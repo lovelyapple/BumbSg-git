@@ -75,6 +75,9 @@ public class SocketServerBase : MonoBehaviour
         var stream = client.GetStream();
         var reader = new StreamReader(stream, Encoding.UTF8);
 
+        //Add Client
+        AddClient(client);
+
         // 接続が切れるまで送受信を繰り返す
         while (client.Connected)
         {

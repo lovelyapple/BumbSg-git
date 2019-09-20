@@ -26,7 +26,7 @@ public partial class UIFieldMenu
             }
             else
             {
-                gameStartButtonLabel.text =  "Crea";
+                gameStartButtonLabel.text =  "CreatingServer";
             }
             
         }

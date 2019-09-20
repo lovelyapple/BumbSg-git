@@ -5,12 +5,12 @@ using UnityEngine;
 [Serializable]
 public enum ProtocolType
 {
-    C2A_RegisterHost,
-    A2C_RegisterHost,
-    C2A_RegisterClient,
-    A2C_RegisterClient,
-    SimpleMsg,
-    Position,
+    C2A_RegisterHost = 1,
+    A2C_RegisterHost = 2,
+    C2A_RegisterClient = 3,
+    A2C_RegisterClient = 4,
+    SimpleMsg = 5,
+    Position = 6,
 }
 [Serializable]
 public class ProtocolItem
@@ -53,7 +53,7 @@ public class ProtocolMaker
     public static ProtocolItem Mk_A2C_RegisterHost()
     {
         ProtocolItem item = new ProtocolItem();
-        item.msgType = ProtocolType.C2A_RegisterHost;
+        item.msgType = ProtocolType.A2C_RegisterClient;
         return item;
     }
     public static ProtocolItem Mk_C2A_RegisterClient()

@@ -106,13 +106,25 @@ public partial class SocketClientBase : MonoBehaviour
         message = message.Replace("\r", "").Replace("\n", "");
         ClientBaseDebugLog("ReadCallback " + message);
 
-        var item = ProtocolMaker.MakeToJson(message);
+        //var item = ProtocolMaker.MakeToJson(message);
+        ClientBaseDebugLog("JsonUtility.FromJson");
+        ProtocolItem item = null;
+        try
+        {
+            item = JsonUtility.FromJson<ProtocolItem>(message);
+            ClientBaseDebugLog("item != null " + (item != null).ToString());
+        }
+        catch
+        {
+            ClientBaseDebugLog("JsonUtility.FromJso Failed");
+        }
 
         if (item != null)
         {
-            ProtocolMaker.DebugDeserializeProtocol(item);
+            // ProtocolMaker.DebugDeserializeProtocol(item);
 
-            switch (item.msgType)
+            ClientBaseDebugLog(item.msgType.ToString());
+            switch ((ProtocolType)item.msgType)
             {
                 case ProtocolType.A2C_RegisterHost:
                     A2C_RegisterAsHost(item);
