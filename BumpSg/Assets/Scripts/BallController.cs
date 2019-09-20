@@ -21,12 +21,18 @@ public class BallController : MonoBehaviour
     public Vector3 remoteAddForcePos;
     public Vector3 remoteAddForceVelocity;
     public Action<BallController> OnBallFallingInToHole;
+    public float gavityAliveTime = 2f;
+    public float gavityAliveTimeMax = 2f;
     void Awake()
     {
         if (ballRigidbody == null)
         {
             ballRigidbody = GetComponent<Rigidbody>();
         }
+    }
+    void Start()
+    {
+        gavityAliveTime = gavityAliveTimeMax;
     }
     public void Update()
     {
@@ -60,6 +66,17 @@ public class BallController : MonoBehaviour
         }
         else
         {
+            if (gavityAliveTime > 0)
+            {
+                gavityAliveTime -= Time.deltaTime;
+                ballRigidbody.useGravity = true;
+                if (gavityAliveTime <= 0)
+                {
+                    gavityAliveTime = 0;
+                    ballRigidbody.useGravity = false;
+                }
+            }
+
             if (remoteRequestingAddForce)
             {
                 transform.position = remoteAddForcePos;
@@ -116,5 +133,21 @@ public class BallController : MonoBehaviour
         holePosition = point.gameObject.transform.position;
         IsFalling = true;
         HoleFallInTimeLeft = HoleFallInTime;
+
+        if (!point.IsHostHole)
+        {
+            SocketClientBase.GetInstance().C2A_GameResult(SocketClientBase.GetInstance().HostClientObjectID.Value);
+        }
+        else
+        {
+            if (SocketClientBase.GetInstance().GuestClientObjectID.HasValue)
+            {
+                SocketClientBase.GetInstance().C2A_GameResult(SocketClientBase.GetInstance().GuestClientObjectID.Value);
+            }
+            else
+            {
+                SocketClientBase.GetInstance().C2A_GameResult(1);
+            }
+        }
     }
 }

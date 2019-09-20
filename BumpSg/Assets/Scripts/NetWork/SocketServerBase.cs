@@ -92,7 +92,7 @@ public class SocketServerBase : MonoBehaviour
             //     OnMessage(str);
             // }
 
-            byte[] bytes = new byte[256];
+            byte[] bytes = new byte[1024];
             client.Client.Receive(bytes);
             string s = Encoding.UTF8.GetString(bytes);
             OnMessage(s, client);

@@ -18,6 +18,7 @@ public partial class SocketClientBase : MonoBehaviour
     public int? SelfClientObjectID;
     public int? HostClientObjectID;
     public int? GuestClientObjectID;
+    public int? WinObjectID;
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
@@ -41,6 +42,7 @@ public partial class SocketClientBase : MonoBehaviour
         SelfClientObjectID = null;
         HostClientObjectID = null;
         GuestClientObjectID = null;
+        WinObjectID = null;
 
         ClientBaseDebugLog("Try to connect to ip " + ip + " port " + serverPort);
         Client = new TcpClient(serverIp, serverPort);
@@ -74,6 +76,7 @@ public partial class SocketClientBase : MonoBehaviour
         SelfClientObjectID = null;
         HostClientObjectID = null;
         GuestClientObjectID = null;
+        WinObjectID = null;
 
         ClientBaseDebugLog("Client stoped");
     }
@@ -133,6 +136,9 @@ public partial class SocketClientBase : MonoBehaviour
                     break;
                 case ProtocolType.A2C_AddForceToBall:
                     A2C_AddForceToBall(item);
+                    break;
+                case ProtocolType.A2C_GameResult:
+                    A2C_GameResult(item);
                     break;
             }
         }

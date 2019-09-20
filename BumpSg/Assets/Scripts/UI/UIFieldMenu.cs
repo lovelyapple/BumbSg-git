@@ -51,6 +51,7 @@ public partial class UIFieldMenu : MonoBehaviour
                 UpdatePlay();
                 break;
             case GameState.Goal:
+                UpdateResult();
                 break;
         }
     }
@@ -96,6 +97,15 @@ public partial class UIFieldMenu : MonoBehaviour
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(true);
+
+        if(SocketClientBase.GetInstance().WinObjectID.Value == SocketClientBase.GetInstance().SelfClientObjectID.Value)
+        {
+            winLabel.text = "あなたの勝だよ！";
+        }
+        else
+        {
+            winLabel.text = "相手の勝だよ！";
+        }
     }
     public void OnClickCreateServerInTitle()
     {
@@ -140,5 +150,9 @@ public partial class UIFieldMenu : MonoBehaviour
         }
 
         SocketClientBase.GetInstance().C2A_RequestStartGame();
+    }
+    public void OnClickReplayInResult()
+    {
+
     }
 }

@@ -4504,7 +4504,7 @@ ParticleSystem:
 --- !u!199 &19913970
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4679,3 +4679,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   endPointInRange: 1
   ball: {fileID: 0}
+  IsHostHole: 1

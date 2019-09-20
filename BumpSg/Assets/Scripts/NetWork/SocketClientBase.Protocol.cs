@@ -102,4 +102,23 @@ public partial class SocketClientBase
             );
         }
     }
+    public void C2A_GameResult(int objectId)
+    {
+        var Item = ProtocolMaker.Mk_C2A_GameResult(objectId);
+        var json = ProtocolMaker.SerializeToJson(Item);
+        var bytes = StrToByteArray(json);
+
+        if (stream.CanWrite)
+        {
+            ClientBaseDebugLog("writed A2C_AddForceToBall");
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+        }
+    }
+    public void A2C_GameResult(ProtocolItem item)
+    {
+        ClientBaseDebugLog("A2C_AddForceToBall");
+        WinObjectID = item.objectId_1;
+        FieldManager.GetInstance().RequestUpdateGameStateAsync(GameState.Goal);
+    }
 }

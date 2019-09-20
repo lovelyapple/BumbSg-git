@@ -104,13 +104,16 @@ public partial class FieldManager : MonoBehaviour
             targetCamera = Camera.main;
         }
 
-        var pos = targetCamera.transform.position;
-        pos.z = -cameraDepth;
-        targetCamera.transform.position = pos;
-
         UpdateGameState(GameState.Title);
         fieldMenu.Setup(targetCamera);
         fieldMenu.SetupAsTitle();
+    }
+    void Start()
+    {
+        var pos = targetCamera.transform.position;
+        pos.z = -cameraDepth;
+        targetCamera.transform.position = pos;
+        targetCameraPos = pos;
     }
     void Update()
     {
@@ -232,11 +235,7 @@ public partial class FieldManager : MonoBehaviour
     }
     public void OnBallFallInToHole(BallController ballController)
     {
-        if (ball != null)
-        {
-            Destroy(ball.gameObject);
-        }
-
-        ball = null;
+        ball.gameObject.SetActive(false);
+        ball.transform.position = Vector3.zero;
     }
 }

@@ -7,6 +7,7 @@ public class HolePoint : MonoBehaviour
     public float endPointInRange = 1.0f;
 
     [SerializeField] BallController ball;
+    public bool IsHostHole;
     void Update()
     {
         if (ball == null)

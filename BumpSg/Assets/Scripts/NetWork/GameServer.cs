@@ -88,6 +88,12 @@ public class GameServer : SocketServerBase
                 msg = ProtocolMaker.SerializeToJson(add_forec);
                 SendMessageToClientAll(msg);
                 break;
+            
+            case ProtocolType.C2A_GameResult:
+                var result = ProtocolMaker.Mk_A2C_GameResult(item);
+                msg = ProtocolMaker.SerializeToJson(result);
+                SendMessageToClientAll(msg);
+                break;
 
             default:
                 // クライアントに受領メッセージを返す

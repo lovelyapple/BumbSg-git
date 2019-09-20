@@ -17,6 +17,9 @@ public enum ProtocolType
 
     C2A_AddForceToBall = 8,
     A2C_AddForceToBall = 9,
+
+    C2A_GameResult = 10,
+    A2C_GameResult = 11,
 }
 [Serializable]
 public struct vector_3
@@ -140,6 +143,25 @@ public class ProtocolMaker
     {
         c2a_item.msgType = ProtocolType.A2C_AddForceToBall;
         return c2a_item;
+    }
+
+    //
+    // Result
+    //
+
+    public static ProtocolItem Mk_C2A_GameResult(int objectId)
+    {
+        ProtocolItem item = new ProtocolItem();
+        item.msgType = ProtocolType.C2A_GameResult;
+        item.objectId_1 = objectId;
+
+        return item;
+    }
+    public static ProtocolItem Mk_A2C_GameResult(ProtocolItem item)
+    {
+        item.msgType = ProtocolType.A2C_GameResult;
+
+        return item;
     }
     //
     // ヘルパー
