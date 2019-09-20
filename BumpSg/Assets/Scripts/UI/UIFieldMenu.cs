@@ -15,6 +15,7 @@ public partial class UIFieldMenu : MonoBehaviour
     [SerializeField] GameObject[] lineLeftObj;
     [SerializeField] GameObject ballDirectionObj;
     [SerializeField] Vector3 ballPanelPos;
+    [SerializeField] bool soloMode;
     public Transform ballTransform;
     public Camera targetCamera;
     void OnEnable()
@@ -124,7 +125,7 @@ public partial class UIFieldMenu : MonoBehaviour
         FieldManager.GetInstance().UpdateGameState(GameState.Title);
         SocketClientBase.IsGameHost = false;
 
-        if(waitForRegisterCoroutine != null)
+        if (waitForRegisterCoroutine != null)
         {
             StopCoroutine(waitForRegisterCoroutine);
         }
@@ -134,7 +135,8 @@ public partial class UIFieldMenu : MonoBehaviour
     {
         if (!SocketClientBase.IsGameHost || !SocketClientBase.GetInstance().HostClientObjectID.HasValue || !SocketClientBase.GetInstance().GuestClientObjectID.HasValue)
         {
-            //return;
+            if (!soloMode)
+                return;
         }
 
         SocketClientBase.GetInstance().C2A_RequestStartGame();
