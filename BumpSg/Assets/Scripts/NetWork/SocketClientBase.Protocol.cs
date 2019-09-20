@@ -22,18 +22,6 @@ public partial class SocketClientBase
             stream.Flush();
         }
     }
-    void A2C_RegisterAsHost(ProtocolItem item)
-    {
-        ClientBaseDebugLog("A2C_RegisterAsHost id " + item.objectId + " result " + item.boolParam);
-        if (item.boolParam)
-        {
-            IsGameHost = true;
-            SelfClientObjectID = item.objectId;
-
-            if (On_A2C_RegisterAsHost != null)
-                On_A2C_RegisterAsHost.Invoke(item);
-        }
-    }
     //
     // Clientとして登録
     //
@@ -51,22 +39,19 @@ public partial class SocketClientBase
             stream.Flush();
         }
     }
-    void A2C_RegisterAsClient(ProtocolItem item)
+    void A2C_UpdateClientInfo(ProtocolItem item)
     {
-        ClientBaseDebugLog("A2C_RegisterAsClient id " + item.objectId + " result " + item.boolParam);
-        if (item.boolParam)
-        {
-            if (!IsGameHost)
-            {
-                SelfClientObjectID = item.objectId;
+        ClientBaseDebugLog("A2C_UpdateClientInfo id " + item.objectId_1 + " result " + item.objectId_2);
+        HostClientObjectID = item.objectId_1;
+        GuestClientObjectID = item.objectId_2 >= 0? item.objectId_2 : new int?();
 
-                if (On_A2C_RegisterAsClient != null)
-                    On_A2C_RegisterAsClient.Invoke(item);
-            }
-            else
-            {
-                EnemyClientObjectID = item.objectId;
-            }
+        if(IsGameHost)
+        {
+            SelfClientObjectID = HostClientObjectID;
+        }
+        else
+        {
+            SelfClientObjectID = GuestClientObjectID;
         }
     }
 }

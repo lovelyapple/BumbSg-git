@@ -14,10 +14,10 @@ public partial class SocketClientBase : MonoBehaviour
     byte[] readbuf = new byte[1024];
     bool isForceStop = false;
     bool isStopReading = false;
-    public bool IsGameHost;
+    public static bool IsGameHost;
     public int? SelfClientObjectID;
-    public int? EnemyClientObjectID;
-    public int HostClientObjectID;
+    public int? HostClientObjectID;
+    public int? GuestClientObjectID;
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
@@ -39,7 +39,8 @@ public partial class SocketClientBase : MonoBehaviour
     {
         serverIp = ip;
         SelfClientObjectID = null;
-        EnemyClientObjectID = null;
+        HostClientObjectID = null;
+        GuestClientObjectID = null;
 
         ClientBaseDebugLog("Try to connect to ip " + ip + " port " + serverPort);
         Client = new TcpClient(serverIp, serverPort);
@@ -71,7 +72,8 @@ public partial class SocketClientBase : MonoBehaviour
         }
 
         SelfClientObjectID = null;
-        EnemyClientObjectID = null;
+        HostClientObjectID = null;
+        GuestClientObjectID = null;
 
         ClientBaseDebugLog("Client stoped");
     }
@@ -127,11 +129,8 @@ public partial class SocketClientBase : MonoBehaviour
             ClientBaseDebugLog(item.msgType.ToString());
             switch ((ProtocolType)item.msgType)
             {
-                case ProtocolType.A2C_RegisterHost:
-                    A2C_RegisterAsHost(item);
-                    break;
-                case ProtocolType.A2C_RegisterClient:
-                    A2C_RegisterAsClient(item);
+                case ProtocolType.A2C_UpdateClientInfo:
+                    A2C_UpdateClientInfo(item);
                     break;
             }
         }

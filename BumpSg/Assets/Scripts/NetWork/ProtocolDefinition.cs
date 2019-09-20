@@ -6,11 +6,10 @@ using UnityEngine;
 public enum ProtocolType
 {
     C2A_RegisterHost = 1,
-    A2C_RegisterHost = 2,
-    C2A_RegisterClient = 3,
-    A2C_RegisterClient = 4,
-    SimpleMsg = 5,
-    Position = 6,
+    C2A_RegisterClient = 2,
+    A2C_UpdateClientInfo = 3,
+    SimpleMsg = 4,
+    Position = 5,
 }
 [Serializable]
 public class ProtocolItem
@@ -18,7 +17,8 @@ public class ProtocolItem
     public int sendFrom;
     public int sendTo;
     public ProtocolType msgType;
-    public int objectId;
+    public int objectId_1;
+    public int objectId_2;
     public Vector3 vectorParam_1;
     public Vector3 vectorParam_2;
     public float floatParam_1;
@@ -44,16 +44,14 @@ public class ProtocolMaker
         item.msgType = ProtocolType.Position;
         return item;
     }
+
+    //
+    //　ログイン
+    //
     public static ProtocolItem Mk_C2A_RegisterHost()
     {
         ProtocolItem item = new ProtocolItem();
         item.msgType = ProtocolType.C2A_RegisterHost;
-        return item;
-    }
-    public static ProtocolItem Mk_A2C_RegisterHost()
-    {
-        ProtocolItem item = new ProtocolItem();
-        item.msgType = ProtocolType.A2C_RegisterClient;
         return item;
     }
     public static ProtocolItem Mk_C2A_RegisterClient()
@@ -62,10 +60,12 @@ public class ProtocolMaker
         item.msgType = ProtocolType.C2A_RegisterClient;
         return item;
     }
-    public static ProtocolItem Mk_A2C_RegisterClient()
+    public static ProtocolItem Mk_A2C_UpdateClientInfo(int hostId, int guestId)
     {
         ProtocolItem item = new ProtocolItem();
-        item.msgType = ProtocolType.A2C_RegisterClient;
+        item.msgType = ProtocolType.A2C_UpdateClientInfo;
+        item.objectId_1 = hostId;
+        item.objectId_2 = guestId;
         return item;
     }
     public static ProtocolItem MakeToJson(string obj)

@@ -65,7 +65,7 @@ public partial class UIFieldMenu : MonoBehaviour
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(false);
-        FieldManager.IsHost = false;
+        SocketClientBase.IsGameHost = false;
     }
     public void SetupAsReady()
     {
@@ -93,13 +93,13 @@ public partial class UIFieldMenu : MonoBehaviour
     {
         GameServer.GetInstance().StartServer();
         FieldManager.GetInstance().UpdateGameState(GameState.Ready);
-        FieldManager.IsHost = true;
+        SocketClientBase.IsGameHost = true;
     }
     public void OnClickStartClientInTitle()
     {
         GameServer.GetInstance().StopServer();
         FieldManager.GetInstance().UpdateGameState(GameState.Ready);
-        FieldManager.IsHost = false;
+        SocketClientBase.IsGameHost = false;
 
         if (waitForRegisterCoroutine != null)
         {
@@ -115,7 +115,7 @@ public partial class UIFieldMenu : MonoBehaviour
         GameServer.GetInstance().StopServer();
         SocketClientBase.GetInstance().StopClient();
         FieldManager.GetInstance().UpdateGameState(GameState.Title);
-        FieldManager.IsHost = false;
+        SocketClientBase.IsGameHost = false;
 
         if(waitForRegisterCoroutine != null)
         {

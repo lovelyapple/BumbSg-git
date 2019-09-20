@@ -19,6 +19,7 @@ public class SocketServerBase : MonoBehaviour
     protected TcpListener _listener;
     public int objectIndex;
     public int? hostObjectId;
+    public int? guestObjectId;
     public readonly Dictionary<int, TcpClient> _clients = new Dictionary<int, TcpClient>();
     public EndPoint hostEndPoint;
 
@@ -32,6 +33,7 @@ public class SocketServerBase : MonoBehaviour
         _listener.BeginAcceptSocket(DoAcceptTcpClientCallback, _listener);
         objectIndex = 0;
         hostObjectId = null;
+        guestObjectId = null;
     }
     protected void StopListen()
     {
@@ -53,6 +55,7 @@ public class SocketServerBase : MonoBehaviour
         _listener = null;
         objectIndex = 0;
         hostObjectId = null;
+        guestObjectId = null;
         ServerDebugLog("Stop Server");
     }
     void AddClient(TcpClient client)

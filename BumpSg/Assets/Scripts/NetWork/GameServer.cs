@@ -54,47 +54,15 @@ public class GameServer : SocketServerBase
         switch (item.msgType)
         {
             case ProtocolType.C2A_RegisterHost:
-                var A2C_item_host = ProtocolMaker.Mk_A2C_RegisterHost();
-
-                if (hostObjectId.HasValue)
-                {
-                    A2C_item_host.boolParam = false;
-                }
-                else
-                {
-                    var hostId = GetClientObjectId(client);
-
-                    if (hostId < 0)
-                    {
-                        A2C_item_host.boolParam = false;
-                    }
-                    else
-                    {
-                        hostObjectId = hostId;
-                        A2C_item_host.objectId = hostObjectId.Value;
-                        A2C_item_host.boolParam = true;
-                    }
-                }
-                msg = ProtocolMaker.SerializeToJson(A2C_item_host);
-                SendMessageToClient(msg, client);
+                hostObjectId = GetClientObjectId(client);
+                var host_logined = ProtocolMaker.Mk_A2C_UpdateClientInfo(hostObjectId.Value, -1);
+                msg = ProtocolMaker.SerializeToJson(host_logined);
+                SendMessageToClientAll(msg);
                 break;
             case ProtocolType.C2A_RegisterClient:
-                var A2C_item_client = ProtocolMaker.Mk_A2C_RegisterClient();
-                var clientId = GetClientObjectId(client);
-
-                if (clientId < 0)
-                {
-                    A2C_item_client.boolParam = false;
-                }
-                else
-                {
-                    hostObjectId = clientId;
-                    A2C_item_client.objectId = hostObjectId.Value;
-                    A2C_item_client.boolParam = true;
-                }
-
-                msg = ProtocolMaker.SerializeToJson(A2C_item_client);
-                // クライアントに受領メッセージを返す
+                guestObjectId = GetClientObjectId(client);
+                var guest_logined = ProtocolMaker.Mk_A2C_UpdateClientInfo(hostObjectId.Value, guestObjectId.Value);
+                msg = ProtocolMaker.SerializeToJson(guest_logined);
                 SendMessageToClientAll(msg);
                 break;
 

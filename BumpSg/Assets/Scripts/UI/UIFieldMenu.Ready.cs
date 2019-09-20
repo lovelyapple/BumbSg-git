@@ -13,16 +13,16 @@ public partial class UIFieldMenu
     void UpdateReady()
     {
 
-        if (FieldManager.IsHost && !SocketClientBase.GetInstance().SelfClientObjectID.HasValue && waitForRegisterCoroutine == null)
+        if (SocketClientBase.IsGameHost && !SocketClientBase.GetInstance().SelfClientObjectID.HasValue && waitForRegisterCoroutine == null)
         {
             waitForRegisterCoroutine = StartCoroutine(AutoRegisterHostIenumerator());
         }
 
-        if (FieldManager.IsHost)
+        if (SocketClientBase.IsGameHost)
         {
             if(selfReady)
             {
-                gameStartButtonLabel.text = SocketClientBase.GetInstance().EnemyClientObjectID.HasValue ? "Start" : "WaitForPlayers";
+                gameStartButtonLabel.text = SocketClientBase.GetInstance().GuestClientObjectID.HasValue ? "Start" : "WaitForPlayers";
             }
             else
             {
@@ -32,7 +32,7 @@ public partial class UIFieldMenu
         }
         else
         {
-            gameStartButtonLabel.text = SocketClientBase.GetInstance().SelfClientObjectID.HasValue ? "Connected" : "FindingServer";
+            gameStartButtonLabel.text = SocketClientBase.GetInstance().HostClientObjectID.HasValue ? "Connected" : "FindingServer";
         }
     }
     IEnumerator AutoRegisterHostIenumerator()
