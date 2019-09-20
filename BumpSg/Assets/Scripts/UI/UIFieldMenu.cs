@@ -97,6 +97,7 @@ public partial class UIFieldMenu : MonoBehaviour
         readyRootObj.SetActive(false);
         playRootObj.SetActive(false);
         goalRootObj.SetActive(true);
+        restartButtonObj.SetActive(SocketClientBase.IsGameHost);
 
         if(SocketClientBase.GetInstance().WinObjectID.Value == SocketClientBase.GetInstance().SelfClientObjectID.Value)
         {
@@ -153,6 +154,6 @@ public partial class UIFieldMenu : MonoBehaviour
     }
     public void OnClickReplayInResult()
     {
-
+        OnClickStartGameInReady();
     }
 }

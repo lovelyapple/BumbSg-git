@@ -15,7 +15,7 @@ public class BallController : MonoBehaviour
     public bool IsBallDead;
     public float HoleFallInTime = 2f;
     public float HoleFallInTimeLeft;
-    Vector3 holePosition;
+    public Vector3 holePosition;
     public bool remoteRequestingAddForce;
     public Vector3 remoteAddForceDir;
     public Vector3 remoteAddForcePos;
@@ -30,9 +30,19 @@ public class BallController : MonoBehaviour
             ballRigidbody = GetComponent<Rigidbody>();
         }
     }
-    void Start()
+    void OnEnable()
     {
         gavityAliveTime = gavityAliveTimeMax;
+    }
+    public void ResetBall()
+    {
+        gameObject.SetActive(false);
+        transform.position = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        IsFalling = false;
+        IsBallDead = false;
+        holePosition = Vector3.zero;
+        ballRigidbody.velocity = Vector3.zero;
     }
     public void Update()
     {

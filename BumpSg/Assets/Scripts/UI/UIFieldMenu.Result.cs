@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public partial class UIFieldMenu
 {
     [SerializeField] Text winLabel;
+    [SerializeField] GameObject restartButtonObj;
     public void UpdateResult()
     {
 

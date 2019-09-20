@@ -123,7 +123,7 @@ public partial class FieldManager : MonoBehaviour
             return;
         }
 
-        if(needChangeState)
+        if (needChangeState)
         {
             UpdateGameState(requestingState);
         }
@@ -169,6 +169,7 @@ public partial class FieldManager : MonoBehaviour
                 break;
             case GameState.Play:
                 ball.gameObject.SetActive(true);
+
                 try
                 {
                     fieldMenu.SetupAsPlay(ball.gameObject.transform);
@@ -235,7 +236,7 @@ public partial class FieldManager : MonoBehaviour
     }
     public void OnBallFallInToHole(BallController ballController)
     {
-        ball.gameObject.SetActive(false);
-        ball.transform.position = Vector3.zero;
+        ball.ResetBall();
+        targetCamera.transform.position = new Vector3(0, 0, -cameraDepth);
     }
 }

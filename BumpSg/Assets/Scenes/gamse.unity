@@ -650,7 +650,7 @@ MonoBehaviour:
   needChangeState: 0
   wallDesappearEffect: {fileID: 0}
   targetCameraPos: {x: 0, y: 0, z: 0}
-  cameraMoveSpeed: 40
+  cameraMoveSpeed: 60
   cameraMoveSpeedAcceleration: 0.95
   prevMosePosition: {x: 0, y: 0, z: 0}
 --- !u!4 &347160122
@@ -973,7 +973,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1283038708}
-        m_MethodName: OnClickReStart
+        m_MethodName: OnClickReplayInResult
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2533,6 +2533,7 @@ MonoBehaviour:
   isServerStartedLabel: {fileID: 1319596246}
   gameStartButtonLabel: {fileID: 866641987}
   winLabel: {fileID: 894157249}
+  restartButtonObj: {fileID: 535258299}
   ipLabel: {fileID: 1877941535}
   portLabel: {fileID: 1929852205}
   ipInputField: {fileID: 1407805896}
@@ -4079,7 +4080,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1976366422
 RectTransform:
   m_ObjectHideFlags: 0
