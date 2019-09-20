@@ -641,7 +641,7 @@ MonoBehaviour:
   ballPrefab: {fileID: 694975396, guid: 95dce4b053d5a40da89e077d3cf94b74, type: 3}
   ballStartPosition: {x: 0, y: 5, z: 0}
   ball: {fileID: 0}
-  cameraDepth: 20
+  cameraDepth: 30
   lineWidth: 0.2
   lineDepth: 0.5
   lastMousePointGet: {x: 0, y: 0, z: 0}
@@ -3234,7 +3234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1699620394}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
