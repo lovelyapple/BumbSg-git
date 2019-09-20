@@ -32,7 +32,7 @@ public partial class UIFieldMenu
         }
         else
         {
-            gameStartButtonLabel.text = SocketClientBase.GetInstance().EnemyClientObjectID.HasValue ? "Start" : "WaitForPlayers";
+            gameStartButtonLabel.text = SocketClientBase.GetInstance().SelfClientObjectID.HasValue ? "Connected" : "FindingServer";
         }
     }
     IEnumerator AutoRegisterHostIenumerator()

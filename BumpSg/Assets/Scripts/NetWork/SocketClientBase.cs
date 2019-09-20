@@ -17,6 +17,7 @@ public partial class SocketClientBase : MonoBehaviour
     public bool IsGameHost;
     public int? SelfClientObjectID;
     public int? EnemyClientObjectID;
+    public int HostClientObjectID;
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;

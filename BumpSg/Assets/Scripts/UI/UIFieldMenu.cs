@@ -100,6 +100,15 @@ public partial class UIFieldMenu : MonoBehaviour
         GameServer.GetInstance().StopServer();
         FieldManager.GetInstance().UpdateGameState(GameState.Ready);
         FieldManager.IsHost = false;
+
+        if (waitForRegisterCoroutine != null)
+        {
+            StopCoroutine(waitForRegisterCoroutine);
+        }
+
+        waitForRegisterCoroutine = null;
+
+        waitForRegisterCoroutine = StartCoroutine(ManualRegisterClientIenumerator());
     }
     public void OnClickStopServerInReady()
     {
