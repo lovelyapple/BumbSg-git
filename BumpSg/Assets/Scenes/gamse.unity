@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -642,7 +642,7 @@ MonoBehaviour:
   ballPrefab: {fileID: 694975396, guid: 95dce4b053d5a40da89e077d3cf94b74, type: 3}
   ballStartPosition: {x: 0, y: 5, z: 0}
   ball: {fileID: 0}
-  cameraDepth: 30
+  cameraDepth: 40
   lineWidth: 0.2
   lineDepth: 0.5
   lastMousePointGet: {x: 0, y: 0, z: 0}
@@ -651,7 +651,7 @@ MonoBehaviour:
   needChangeState: 0
   wallDesappearEffect: {fileID: 0}
   targetCameraPos: {x: 0, y: 0, z: 0}
-  cameraMoveSpeed: 60
+  cameraMoveSpeed: 5
   cameraMoveSpeedAcceleration: 0.95
   prevMosePosition: {x: 0, y: 0, z: 0}
 --- !u!4 &347160122
@@ -2538,6 +2538,7 @@ MonoBehaviour:
   ipLabel: {fileID: 1877941535}
   portLabel: {fileID: 1929852205}
   ipInputField: {fileID: 1407805896}
+  prevIp: 
 --- !u!224 &1283038709
 RectTransform:
   m_ObjectHideFlags: 0

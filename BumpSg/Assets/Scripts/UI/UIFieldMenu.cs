@@ -31,7 +31,11 @@ public partial class UIFieldMenu : MonoBehaviour
             FieldManager.GetInstance().onUpdateLineLeftAcount -= UpdateLineLeftAmount;
         }
     }
-
+    void Start()
+    {
+        ipInputField.text = PlayerPrefs.GetString("TargetServerIP", "192.168.00.00");
+        prevIp = ipInputField.text;
+    }
     void Update()
     {
         if (FieldManager.GetInstance() == null)
@@ -99,7 +103,7 @@ public partial class UIFieldMenu : MonoBehaviour
         goalRootObj.SetActive(true);
         restartButtonObj.SetActive(SocketClientBase.IsGameHost);
 
-        if(SocketClientBase.GetInstance().WinObjectID.Value == SocketClientBase.GetInstance().SelfClientObjectID.Value)
+        if (SocketClientBase.GetInstance().WinObjectID.Value == SocketClientBase.GetInstance().SelfClientObjectID.Value)
         {
             winLabel.text = "あなたの勝だよ！";
         }

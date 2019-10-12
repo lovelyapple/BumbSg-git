@@ -21,15 +21,15 @@ public partial class UIFieldMenu
 
         if (SocketClientBase.IsGameHost)
         {
-            if(selfReady)
+            if (selfReady)
             {
                 gameStartButtonLabel.text = SocketClientBase.GetInstance().GuestClientObjectID.HasValue ? "Start" : "WaitForPlayers";
             }
             else
             {
-                gameStartButtonLabel.text =  "CreatingServer";
+                gameStartButtonLabel.text = "CreatingServer";
             }
-            
+
         }
         else
         {
@@ -83,7 +83,7 @@ public partial class UIFieldMenu
         var client = SocketClientBase.GetInstance();
         Debug.Log("ManualRegisterClientIenumerator as Client ");
 
-        client.ConnectToServer(ipInputField.text);
+        client.ConnectToServer(GetInputingIp());
 
         while (client.Client == null && !client.Client.Connected)
         {

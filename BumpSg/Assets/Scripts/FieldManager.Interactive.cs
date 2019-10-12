@@ -12,7 +12,7 @@ public partial class FieldManager : MonoBehaviour
     {
         if ((targetCameraPos - targetCamera.transform.position).sqrMagnitude > float.Epsilon)
         {
-            targetCamera.transform.position = Vector3.Lerp(targetCamera.transform.position, targetCameraPos, cameraMoveSpeedAcceleration);
+            targetCamera.transform.position = Vector3.Lerp(targetCamera.transform.position, targetCameraPos, cameraMoveSpeedAcceleration * Time.deltaTime);
         }
     }
     void UpdateInteractive()
@@ -75,12 +75,12 @@ public partial class FieldManager : MonoBehaviour
         }
         else if (Input.GetMouseButtonDown(1))
         {
-            prevMosePosition = GetMouseCameraPoint();
+            prevMosePosition = Input.mousePosition;
             targetCameraPos = targetCamera.transform.position;
         }
         else if (Input.GetMouseButton(1))
         {
-            var currentPos = GetMouseCameraPoint();
+            var currentPos = Input.mousePosition;
 
             var offSet = currentPos - prevMosePosition;
             offSet.z = 0;
@@ -89,7 +89,27 @@ public partial class FieldManager : MonoBehaviour
             {
                 offSet.x = -offSet.x;
                 offSet.y = -offSet.y;
+
+                Debug.Log(offSet);
                 targetCameraPos += offSet * cameraMoveSpeed * Time.deltaTime;
+
+                if (targetCameraPos.x > 50)
+                {
+                    targetCameraPos.x = 50;
+                }
+                else if (targetCameraPos.x < -50)
+                {
+                    targetCameraPos.x = -50;
+                }
+
+                if (targetCameraPos.y > 30)
+                {
+                    targetCameraPos.y = 30;
+                }
+                else if (targetCameraPos.y < -30)
+                {
+                    targetCameraPos.y = -30;
+                }
             }
 
             targetCameraPos.z = -cameraDepth;
