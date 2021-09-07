@@ -88,7 +88,7 @@ public class GameServer : SocketServerBase
                 msg = ProtocolMaker.SerializeToJson(add_forec);
                 SendMessageToClientAll(msg);
                 break;
-            case ProtocolType.A2C_UpdateLine:
+            case ProtocolType.C2A_UpdateLine:
                 var update_line = ProtocolMaker.Mk_A2C_UpdateLine(item);
                 msg = ProtocolMaker.SerializeToJson(update_line);
                 SendMessageToClientAll(msg);
