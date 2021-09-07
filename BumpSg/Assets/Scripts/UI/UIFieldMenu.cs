@@ -13,6 +13,7 @@ public partial class UIFieldMenu : MonoBehaviour
     [SerializeField] GameObject goalRootObj;
     [SerializeField] Text lineLeftLabel;
     [SerializeField] GameObject[] lineLeftObj;
+    [SerializeField] Slider lengthLeftSlider;
     [SerializeField] GameObject ballDirectionObj;
     [SerializeField] Vector3 ballPanelPos;
     [SerializeField] bool soloMode;
@@ -21,6 +22,7 @@ public partial class UIFieldMenu : MonoBehaviour
     void OnEnable()
     {
         FieldManager.GetInstance().onUpdateLineLeftAcount += UpdateLineLeftAmount;
+        FieldManager.GetInstance().onUpdateLineLengthLeft += UpdateSliderLeft;
         UpdateLineLeftAmount(FieldManager.GetInstance().LineLeft);
     }
 
@@ -29,6 +31,7 @@ public partial class UIFieldMenu : MonoBehaviour
         if (FieldManager.GetInstance() != null)
         {
             FieldManager.GetInstance().onUpdateLineLeftAcount -= UpdateLineLeftAmount;
+            FieldManager.GetInstance().onUpdateLineLengthLeft -= UpdateSliderLeft;
         }
     }
     void Start()

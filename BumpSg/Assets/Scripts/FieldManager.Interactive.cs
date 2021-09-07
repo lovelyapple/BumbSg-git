@@ -32,8 +32,8 @@ public partial class FieldManager : MonoBehaviour
                     var endPoint = startPoint + Vector3.up * 0.01f;
 
                     var line = Instantiate(linePrefab);
-                    UpdateLineObj(line, startPoint, endPoint);
                     creatingLine = line.GetComponent<LineController>();
+                    UpdateLineObj(creatingLine, startPoint, endPoint);
                     selfLineList.Add(creatingLine);
                     DecreaseLineCount();
                 }
@@ -59,6 +59,7 @@ public partial class FieldManager : MonoBehaviour
         {
             if (creatingLine != null)
             {
+                LineLenghtLeft -= creatingLine.length;
                 SocketClientBase.GetInstance().C2A_UpdateLine(SocketClientBase.GetInstance().SelfClientObjectID.Value, creatingLine, true);
                 creatingLine = null;
             }
@@ -148,10 +149,42 @@ public partial class FieldManager : MonoBehaviour
                 if (creatingLine == null || creatingLine.IsDead) return;
 
                 var endPoint = GetMouseCameraPoint();
-                UpdateLineObj(creatingLine.gameObject, startPoint, endPoint);
                 creatingLine.Setup(startPoint, endPoint, GetNextSelfLineId(), true);
+                UpdateLineObj(creatingLine, startPoint, endPoint);
             }
         }
+    }
+    void UpdateLineObj(LineController line, Vector3 start, Vector3 end)
+    {
+        var lineObj = line.gameObject;
+        var lenghtLeft = LineLenghtLeft;
+        var diff = (end - start);
+        var dir = diff.normalized;
+
+        if (diff.magnitude > lenghtLeft)
+        {
+            end = start + dir * lenghtLeft;
+        }
+
+        diff = (end - start);
+        if (diff.magnitude > max_line_length)
+        {
+            end = start + dir * max_line_length;
+        }
+
+        diff = (end - start);
+        // 残りの分量をリアルタイムに反映
+        lenghtLeft = Mathf.Max(lenghtLeft - diff.magnitude, 0);
+
+        if (onUpdateLineLengthLeft != null)
+        {
+            onUpdateLineLengthLeft(lenghtLeft / max_line_length_total);
+        }
+
+        lineObj.transform.position = (start + end) / 2;
+        lineObj.transform.right = (end - start).normalized;
+        lineObj.transform.localScale = new Vector3((end - start).magnitude, lineWidth, lineDepth);
+        line.UpdateStartEnd(start, end);
     }
     public void DecreaseLineCount()
     {

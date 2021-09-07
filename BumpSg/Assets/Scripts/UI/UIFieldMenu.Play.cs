@@ -64,4 +64,9 @@ public partial class UIFieldMenu
             lineLeftLabel.text = "";
         }
     }
+
+    public void UpdateSliderLeft(float v)
+    {
+        lengthLeftSlider.value = v;
+    }
 }

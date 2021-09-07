@@ -28,6 +28,7 @@ public class LineController : MonoBehaviour
     [SerializeField] float chargeCheckRange;
     public Vector3 startPoint;
     public Vector3 endPoint;
+    public float length = 0f;
 
     const float pie = 3.1415926f;
     void Awake()
@@ -42,8 +43,16 @@ public class LineController : MonoBehaviour
         this.isLocal = isLocal;
         this.startPoint = startP;
         this.endPoint = endP;
+        this.length = (startP - endP).magnitude;
 
-        chargeCheckRange = (startP - endP).magnitude * chargeCheckRateFix;
+        chargeCheckRange = length * chargeCheckRateFix;
+    }
+    public void UpdateStartEnd(Vector3 startP, Vector3 endP)
+    {
+        this.startPoint = startP;
+        this.endPoint = endP;
+        this.length = (startP - endP).magnitude;
+        chargeCheckRange = length * chargeCheckRateFix;
     }
     public bool CheckPointRange(Vector3 point, bool isStart)
     {

@@ -81,6 +81,28 @@ public partial class FieldManager : MonoBehaviour
             }
         }
     }
+    const float max_line_length_total = 60f;
+    const float max_line_length = 15f;
+    float _lineLenghtLeft = max_line_length_total;
+    public float LineLenghtLeft
+    {
+        get
+        {
+            _lineLenghtLeft = Mathf.Clamp(_lineLenghtLeft, 0, _lineLenghtLeft);
+            return _lineLenghtLeft;
+        }
+
+        set
+        {
+            _lineLenghtLeft = value;
+            _lineLenghtLeft = Mathf.Clamp(_lineLenghtLeft, 0, _lineLenghtLeft);
+
+            if (onUpdateLineLengthLeft != null)
+            {
+                onUpdateLineLengthLeft(_lineLenghtLeft / max_line_length_total);
+            }
+        }
+    }
     public List<LineController> selfLineList = new List<LineController>();
     [SerializeField] BallController ballPrefab;
     [SerializeField] Vector3 ballStartPosition;
@@ -98,6 +120,7 @@ public partial class FieldManager : MonoBehaviour
     public GameState requestingState;
     public bool needChangeState;
     public Action<int> onUpdateLineLeftAcount;
+    public Action<float> onUpdateLineLengthLeft;
     void Awake()
     {
         SetupInstace();
@@ -180,6 +203,7 @@ public partial class FieldManager : MonoBehaviour
                 SoundManager.GetInstance().OnGame();
                 ball.gameObject.SetActive(true);
                 ClearAllLine();
+                LineLenghtLeft = max_line_length_total;
 
                 try
                 {
@@ -195,20 +219,6 @@ public partial class FieldManager : MonoBehaviour
                 SoundManager.GetInstance().OnEnd();
                 break;
         }
-    }
-    const float max_line_length = 15f;
-    void UpdateLineObj(GameObject lineObj, Vector3 start, Vector3 end)
-    {
-        var diff = (end - start);
-        var dir = diff.normalized;
-        if ((diff.magnitude > max_line_length))
-        {
-            end = start + dir * max_line_length;
-        }
-
-        lineObj.transform.position = (start + end) / 2;
-        lineObj.transform.right = (end - start).normalized;
-        lineObj.transform.localScale = new Vector3((end - start).magnitude, lineWidth, lineDepth);
     }
     Vector3 GetMouseCameraPoint()
     {
@@ -276,6 +286,8 @@ public partial class FieldManager : MonoBehaviour
             {
                 onUpdateLineLeftAcount.Invoke(LineLeft);
             }
+
+            LineLenghtLeft += line.length;
 
             Debug.Log("success remove line");
         }
