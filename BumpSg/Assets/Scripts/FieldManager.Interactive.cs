@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] float cameraMoveSpeed;
     [SerializeField] float cameraMoveSpeedAcceleration = 0.95f;
     [SerializeField] Vector3 prevMosePosition;
+
     void UpdateTargetCameraTransform()
     {
         if ((targetCameraPos - targetCamera.transform.position).sqrMagnitude > float.Epsilon)
@@ -62,6 +64,7 @@ public partial class FieldManager : MonoBehaviour
         {
             if (creatingLine != null)
             {
+                SocketClientBase.GetInstance().C2A_UpdateLine(SocketClientBase.GetInstance().SelfClientObjectID.Value, creatingLine, true);
                 creatingLine = null;
             }
 
@@ -151,10 +154,31 @@ public partial class FieldManager : MonoBehaviour
 
                 var endPoint = GetMouseCameraPoint();
                 UpdateLineObj(creatingLine.gameObject, startPoint, endPoint);
-                creatingLine.Setup(startPoint, endPoint);
+                creatingLine.Setup(startPoint, endPoint, GetNextSelfLineId(), true);
             }
         }
+    }
 
+    List<LineController> remoteLineCtrlList = new List<LineController>();
+    public void OnRemoteLineCreated(ProtocolItem item)
+    {
+        var line = Instantiate(enemyLinePrefab);
+        var ctrl = line.GetComponent<LineController>();
+        ctrl.lineId = item.objectId_1;
+        ctrl.isLocal = false;
+        ctrl.transform.position = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_1);
+        ctrl.transform.localEulerAngles = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2);
+        ctrl.transform.localScale = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_3);
+        remoteLineCtrlList.Add(ctrl);
+    }
+    public void OnRemoteLineDead(int lineId)
+    {
+        var ctrl = remoteLineCtrlList.Find(x => x.lineId == lineId);
 
+        if (ctrl != null)
+        {
+            remoteLineCtrlList.Remove(ctrl);
+            ctrl.SetLineDead();
+        }
     }
 }

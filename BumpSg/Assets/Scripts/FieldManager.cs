@@ -40,8 +40,10 @@ public partial class FieldManager : MonoBehaviour
     [SerializeField] UIFieldMenu fieldMenu;
     [SerializeField] Camera targetCamera;
     [SerializeField] GameObject linePrefab;
+    [SerializeField] GameObject enemyLinePrefab;
     [SerializeField] LineController creatingLine;
     [SerializeField] LineController selectedLine;
+    public int selfLineIDIndex = 0;
     public int lineLeftMax = 8;
     int _lineLeft = 8;
     public int LineLeft
@@ -117,6 +119,7 @@ public partial class FieldManager : MonoBehaviour
         pos.z = -cameraDepth;
         targetCamera.transform.position = pos;
         targetCameraPos = pos;
+        selfLineIDIndex = 0;
     }
     void Update()
     {
@@ -228,6 +231,14 @@ public partial class FieldManager : MonoBehaviour
 
         selfLineList.Clear();
 
+        foreach(var l in remoteLineCtrlList)
+        {
+            if (l != null)
+                Destroy(l.gameObject);
+        }
+
+        remoteLineCtrlList.Clear();
+
         if (creatingLine != null)
         {
             Destroy(creatingLine.gameObject);
@@ -267,5 +278,10 @@ public partial class FieldManager : MonoBehaviour
     {
         ball.ResetBall();
         targetCamera.transform.position = new Vector3(0, 0, -cameraDepth);
+    }
+    public int GetNextSelfLineId()
+    {
+        selfLineIDIndex++;
+        return SocketClientBase.GetInstance().SelfClientObjectID.Value * 100000 + selfLineIDIndex;
     }
 }

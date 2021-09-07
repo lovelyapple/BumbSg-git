@@ -10,6 +10,8 @@ public class PowerColor
 }
 public class LineController : MonoBehaviour
 {
+    public int lineId;
+    public bool isLocal;
     [SerializeField] List<PowerColor> powerColors;
     [SerializeField] Renderer lineRender;
     [SerializeField] Collider bodyCol;
@@ -34,8 +36,10 @@ public class LineController : MonoBehaviour
         bodyCol = GetComponent<Collider>();
         lineRender = GetComponent<Renderer>();
     }
-    public void Setup(Vector3 startP, Vector3 endP)
+    public void Setup(Vector3 startP, Vector3 endP, int id, bool isLocal)
     {
+        this.lineId = id;
+        this.isLocal = isLocal;
         this.startPoint = startP;
         this.endPoint = endP;
 
@@ -68,7 +72,7 @@ public class LineController : MonoBehaviour
                 FieldManager.GetInstance().Ball.PowerUp(PowerUpStrength);
             }
 
-            IsDead = true;
+            SetLineDead();
             bodyCol.enabled = false;
 
             FieldManager.GetInstance().RemoveLine(this);
@@ -86,13 +90,13 @@ public class LineController : MonoBehaviour
     }
     void Update()
     {
-        if(lifeTime > 0)
+        if (lifeTime > 0)
         {
             lifeTime -= Time.deltaTime;
 
-            if(lifeTime <=0)
+            if (lifeTime <= 0)
             {
-                IsDead = true;
+                SetLineDead();
             }
         }
 
@@ -130,6 +134,15 @@ public class LineController : MonoBehaviour
         if (setCol != null)
         {
             lineRender.material.color = setCol.color;
+        }
+    }
+    public void SetLineDead()
+    {
+        IsDead = true;
+
+        if (isLocal)
+        {
+            SocketClientBase.GetInstance().C2A_UpdateLine(SocketClientBase.GetInstance().SelfClientObjectID.Value, this, false);
         }
     }
 }

@@ -102,6 +102,38 @@ public partial class SocketClientBase
             );
         }
     }
+    public void A2C_UpdateLine(ProtocolItem item)
+    {
+        ClientBaseDebugLog("A2C_UpdateLine");
+
+        if (item.sendFrom != SelfClientObjectID)
+        {
+            ClientBaseDebugLog("A2C_AddForceToBall  Excuted!!");
+
+            if (item.boolParam)
+            {
+                FieldManager.GetInstance().OnRemoteLineCreated(item);
+            }
+            else
+            {
+                FieldManager.GetInstance().OnRemoteLineDead(item.objectId_1);
+            }
+        }
+    }
+    public void C2A_UpdateLine(int sendFrom, LineController line, bool isCreate)
+    {
+        var Item = ProtocolMaker.Mk_C2A_UpdateLine(sendFrom, line.lineId, line.transform.position, line.transform.localEulerAngles, line.transform.localScale, isCreate);
+        var json = ProtocolMaker.SerializeToJson(Item);
+        var bytes = StrToByteArray(json);
+
+        if (stream.CanWrite)
+        {
+            ClientBaseDebugLog("writed C2A_UpdateLine");
+            stream.Write(bytes, 0, bytes.Length);
+            stream.Flush();
+        }
+    }
+    // public void A2C_UpdateLine()
     public void C2A_GameResult(int objectId)
     {
         var Item = ProtocolMaker.Mk_C2A_GameResult(objectId);

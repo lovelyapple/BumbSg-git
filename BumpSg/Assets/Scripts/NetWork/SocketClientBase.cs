@@ -93,7 +93,7 @@ public partial class SocketClientBase : MonoBehaviour
         Encoding enc = Encoding.UTF8;
         int bytes = stream.EndRead(ar);
 
-        if ( bytes == 0)
+        if (bytes == 0)
         {
             StopClient();
             return;
@@ -116,6 +116,8 @@ public partial class SocketClientBase : MonoBehaviour
 
         if (item != null)
         {
+
+            
             // ProtocolMaker.DebugDeserializeProtocol(item);
             switch ((ProtocolType)item.msgType)
             {
@@ -127,6 +129,9 @@ public partial class SocketClientBase : MonoBehaviour
                     break;
                 case ProtocolType.A2C_AddForceToBall:
                     A2C_AddForceToBall(item);
+                    break;
+                case ProtocolType.A2C_UpdateLine:
+                    A2C_UpdateLine(item);
                     break;
                 case ProtocolType.A2C_GameResult:
                     A2C_GameResult(item);
