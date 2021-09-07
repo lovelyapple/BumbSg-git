@@ -108,7 +108,7 @@ public partial class SocketClientBase
 
         if (item.sendFrom != SelfClientObjectID)
         {
-            ClientBaseDebugLog("A2C_AddForceToBall  Excuted!!");
+            ClientBaseDebugLog("A2C_UpdateLine  Excuted!!");
 
             if (item.boolParam)
             {
