@@ -108,7 +108,14 @@ public partial class SocketClientBase
             if (item.boolParam)
             {
                 Debug.LogError("OnRemoteLineCreated");
-                FieldManager.GetInstance().OnRemoteLineCreated(item);
+                try
+                {
+                    FieldManager.GetInstance().OnRemoteLineCreated(item);
+                }
+                catch
+                {
+                    Debug.LogError("OnRemoteLineCreated Failed");
+                }
             }
             else
             {

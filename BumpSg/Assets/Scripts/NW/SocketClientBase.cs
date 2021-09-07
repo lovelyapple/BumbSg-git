@@ -114,27 +114,34 @@ public partial class SocketClientBase : MonoBehaviour
             ClientBaseDebugLog("JsonUtility.FromJso Failed");
         }
 
-        if (item != null)
+        try
         {
-            // ProtocolMaker.DebugDeserializeProtocol(item);
-            switch ((ProtocolType)item.msgType)
+            if (item != null)
             {
-                case ProtocolType.A2C_UpdateClientInfo:
-                    A2C_UpdateClientInfo(item);
-                    break;
-                case ProtocolType.A2C_ResponseStartGame:
-                    A2C_ResponseStartGame();
-                    break;
-                case ProtocolType.A2C_AddForceToBall:
-                    A2C_AddForceToBall(item);
-                    break;
-                case ProtocolType.A2C_UpdateLine:
-                    A2C_UpdateLine(item);
-                    break;
-                case ProtocolType.A2C_GameResult:
-                    A2C_GameResult(item);
-                    break;
+                // ProtocolMaker.DebugDeserializeProtocol(item);
+                switch ((ProtocolType)item.msgType)
+                {
+                    case ProtocolType.A2C_UpdateClientInfo:
+                        A2C_UpdateClientInfo(item);
+                        break;
+                    case ProtocolType.A2C_ResponseStartGame:
+                        A2C_ResponseStartGame();
+                        break;
+                    case ProtocolType.A2C_AddForceToBall:
+                        A2C_AddForceToBall(item);
+                        break;
+                    case ProtocolType.A2C_UpdateLine:
+                        A2C_UpdateLine(item);
+                        break;
+                    case ProtocolType.A2C_GameResult:
+                        A2C_GameResult(item);
+                        break;
+                }
             }
+        }
+        catch
+        {
+            Debug.LogError("Excute Failed");
         }
 
         readbuf = new byte[2048];

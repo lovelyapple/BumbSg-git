@@ -175,12 +175,16 @@ public partial class FieldManager : MonoBehaviour
     public void OnRemoteLineCreated(ProtocolItem item)
     {
         var line = Instantiate(enemyLinePrefab);
+        Debug.LogError("Instantiate");
         var ctrl = line.GetComponent<LineController>();
+        Debug.LogError("GetComponent");
         ctrl.lineId = item.objectId_1;
         ctrl.isLocal = false;
+        Debug.LogError("isLocal");
         ctrl.transform.position = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_1);
         ctrl.transform.eulerAngles = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2);
         ctrl.transform.localScale = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_3);
+        Debug.LogError("localScale");
         remoteLineCtrlList.Add(ctrl);
         Debug.LogError("OnRemoteLineCreated");
     }

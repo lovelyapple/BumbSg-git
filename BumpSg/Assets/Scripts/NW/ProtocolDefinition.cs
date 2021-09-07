@@ -42,8 +42,6 @@ public class ProtocolItem
     public vector_3 vectorParam_1;
     public vector_3 vectorParam_2;
     public vector_3 vectorParam_3;
-    public float floatParam_1;
-    public float floatParam_2;
     public string stringParam;
     public bool boolParam;
 }
