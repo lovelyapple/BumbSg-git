@@ -74,8 +74,7 @@ public class LineController : MonoBehaviour
 
             SetLineDead();
             bodyCol.enabled = false;
-
-            FieldManager.GetInstance().RemoveLine(this);
+            SoundManager.GetInstance().PlayerOneShotBallLineHit();
 
             Vector3 hitPos;
             foreach (ContactPoint point in collision.contacts)
@@ -143,7 +142,7 @@ public class LineController : MonoBehaviour
         if (isLocal)
         {
             SocketClientBase.GetInstance().C2A_UpdateLine(SocketClientBase.GetInstance().SelfClientObjectID.Value, this, false);
-            FieldManager.GetInstance().AddLineCount();
+            FieldManager.GetInstance().RemoveLine(this);
         }
     }
 }

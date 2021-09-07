@@ -34,16 +34,16 @@ public struct vector_3
 [Serializable]
 public class ProtocolItem
 {
-    public int sendFrom;
-    public int sendTo;
-    public ProtocolType msgType;
-    public int objectId_1;
-    public int objectId_2;
-    public vector_3 vectorParam_1;
-    public vector_3 vectorParam_2;
-    public vector_3 vectorParam_3;
-    public string stringParam;
-    public bool boolParam;
+    public int sendFrom = 0;
+    public int sendTo = 0;
+    public ProtocolType msgType = ProtocolType.SimpleMsg;
+    public int objectId_1 = 0;
+    public int objectId_2 = 0;
+    public vector_3 vectorParam_1 = new vector_3();
+    public vector_3 vectorParam_2 = new vector_3();
+    public vector_3 vectorParam_3 = new vector_3();
+    public string stringParam = string.Empty;
+    public bool boolParam = false;
 }
 public class ProtocolMaker
 {

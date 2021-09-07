@@ -111,7 +111,8 @@ public partial class SocketClientBase : MonoBehaviour
         }
         catch
         {
-            ClientBaseDebugLog("JsonUtility.FromJso Failed");
+            ClientBaseDebugLog("JsonUtility.From Json Failed");
+            return;
         }
 
         try

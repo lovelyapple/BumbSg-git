@@ -121,6 +121,7 @@ public partial class FieldManager : MonoBehaviour
         targetCamera.transform.position = pos;
         targetCameraPos = pos;
         selfLineIDIndex = 0;
+        SocketClientBase.GetInstance().enemyLinePrefab = enemyLinePrefab;
     }
     void Update()
     {
@@ -170,11 +171,13 @@ public partial class FieldManager : MonoBehaviour
         {
             case GameState.Title:
                 fieldMenu.SetupAsTitle();
+                SoundManager.GetInstance().OnTitle();
                 break;
             case GameState.Ready:
                 fieldMenu.SetupAsReady();
                 break;
             case GameState.Play:
+                SoundManager.GetInstance().OnGame();
                 ball.gameObject.SetActive(true);
                 ClearAllLine();
 
@@ -189,12 +192,20 @@ public partial class FieldManager : MonoBehaviour
                 break;
             case GameState.Goal:
                 fieldMenu.SetupAsGoal();
+                SoundManager.GetInstance().OnEnd();
                 break;
         }
     }
-
+    const float max_line_length = 15f;
     void UpdateLineObj(GameObject lineObj, Vector3 start, Vector3 end)
     {
+        var diff = (end - start);
+        var dir = diff.normalized;
+        if ((diff.magnitude > max_line_length))
+        {
+            end = start + dir * max_line_length;
+        }
+
         lineObj.transform.position = (start + end) / 2;
         lineObj.transform.right = (end - start).normalized;
         lineObj.transform.localScale = new Vector3((end - start).magnitude, lineWidth, lineDepth);
@@ -232,13 +243,13 @@ public partial class FieldManager : MonoBehaviour
 
         selfLineList.Clear();
 
-        foreach(var l in remoteLineCtrlList)
-        {
-            if (l != null)
-                Destroy(l.gameObject);
-        }
+        // foreach(var l in remoteLineCtrlList)
+        // {
+        //     if (l != null)
+        //         Destroy(l.gameObject);
+        // }
 
-        remoteLineCtrlList.Clear();
+        // remoteLineCtrlList.Clear();
 
         if (creatingLine != null)
         {

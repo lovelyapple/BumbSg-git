@@ -101,16 +101,40 @@ public partial class SocketClientBase
     {
         ClientBaseDebugLog("A2C_UpdateLine");
 
-        if (item.sendFrom != SelfClientObjectID)
+        // if (item.sendFrom != SelfClientObjectID)
         {
             ClientBaseDebugLog("A2C_UpdateLine  Excuted!!" + item.boolParam);
 
             if (item.boolParam)
             {
-                Debug.LogError("OnRemoteLineCreated");
+                Debug.LogError("A2C_UpdateLine");
+                var id = item.objectId_1;
+                Debug.LogError("id" + id);
+                var pos = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_1);
+                Debug.LogError("pos" + pos);
+                var dir = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2);
+                Debug.LogError("dir" + dir);
+                var scl = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_3);
+                Debug.LogError("scl" + scl);
+
                 try
                 {
-                    FieldManager.GetInstance().OnRemoteLineCreated(item);
+                    Debug.LogError("OnRemoteLineCreated");
+                    Debug.Log(item.msgType + " " + item.objectId_1 + " " + item.objectId_2 + " " + item.sendFrom + " " +
+                    item.sendTo + " " + item.stringParam + " " + item.vectorParam_1 + " " + item.vectorParam_2 + " " + item.vectorParam_3 + " " + item.boolParam);
+
+                    var a = 100 + 111;
+                    Debug.LogError("a" + a);
+                    var line = GameObject.Instantiate(enemyLinePrefab);
+
+                    // var line = Instantiate(enemyLinePrefab);
+                    // var ctrl = line.GetComponent<LineController>();
+                    // ctrl.lineId = id;
+                    // ctrl.isLocal = false;
+                    // ctrl.transform.position = pos;
+                    // ctrl.transform.eulerAngles = dir;
+                    // ctrl.transform.localScale = scl;
+                    // remoteLineCtrlList.Add(ctrl);
                 }
                 catch
                 {
@@ -120,12 +144,13 @@ public partial class SocketClientBase
             else
             {
                 Debug.LogError("OnRemoteLineDead");
-                FieldManager.GetInstance().OnRemoteLineDead(item.objectId_1);
+                OnRemoteLineDead(item.objectId_1);
             }
         }
     }
     public void C2A_UpdateLine(int sendFrom, LineController line, bool isCreate)
     {
+        return;
         var Item = ProtocolMaker.Mk_C2A_UpdateLine(sendFrom, line.lineId, line.transform.position, line.transform.eulerAngles, line.transform.localScale, isCreate);
         var json = ProtocolMaker.SerializeToJson(Item);
         var bytes = StrToByteArray(json);
@@ -145,14 +170,42 @@ public partial class SocketClientBase
 
         if (stream.CanWrite)
         {
-            ClientBaseDebugLog("writed A2C_AddForceToBall");
+            ClientBaseDebugLog("writed C2A_GameResult");
             stream.Write(bytes, 0, bytes.Length);
         }
     }
     public void A2C_GameResult(ProtocolItem item)
     {
-        ClientBaseDebugLog("A2C_AddForceToBall");
+        ClientBaseDebugLog("A2C_GameResult");
         WinObjectID = item.objectId_1;
         FieldManager.GetInstance().RequestUpdateGameStateAsync(GameState.Goal);
+    }
+
+
+    List<LineController> remoteLineCtrlList = new List<LineController>();
+    public GameObject enemyLinePrefab;
+    public void OnRemoteLineCreated(int id, Vector3 pos, Vector3 dir, Vector3 scl)
+    {
+        Debug.LogError("OnRemoteLineCreated");
+        var line = Instantiate(enemyLinePrefab);
+        var ctrl = line.GetComponent<LineController>();
+        ctrl.lineId = id;
+        ctrl.isLocal = false;
+        ctrl.transform.position = pos;
+        ctrl.transform.eulerAngles = dir;
+        ctrl.transform.localScale = scl;
+        remoteLineCtrlList.Add(ctrl);
+    }
+    public void OnRemoteLineDead(int lineId)
+    {
+        var ctrl = remoteLineCtrlList.Find(x => x.lineId == lineId);
+
+        if (ctrl != null)
+        {
+            remoteLineCtrlList.Remove(ctrl);
+            ctrl.SetLineDead();
+        }
+
+        Debug.LogError("OnRemoteLineDead");
     }
 }
