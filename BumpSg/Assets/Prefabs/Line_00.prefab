@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 8c7787a1376e642799673a9536f259ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -114,9 +114,11 @@ MonoBehaviour:
     color: {r: 1, g: 0, b: 0, a: 0}
   lineRender: {fileID: 0}
   bodyCol: {fileID: 2169848373765755080}
+  lifeTime: 30
   IsDead: 0
   PowerUpPerRow: 0.1
   PowerUpStrength: 1.1
+  PowerUpStrengthLimit: 3.5
   deadEffectTime: 0.2
   desppearSpeed: 10
   defaultScale: {x: 0, y: 0, z: 0}

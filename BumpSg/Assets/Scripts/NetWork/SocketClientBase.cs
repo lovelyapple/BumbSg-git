@@ -84,30 +84,21 @@ public partial class SocketClientBase : MonoBehaviour
     private IEnumerator StartReading()
     {
         ClientBaseDebugLog("START Reading!");
-        readbuf = new byte[1024];
-
-        while (!isForceStop)
-        {
-            if (!isStopReading)
-            {
-                StartCoroutine(ReadMessage());
-            }
-            yield return new WaitForSeconds(0.01f);//あんまりしょっちゅうやらないために
-        }
-    }
-    //常駐
-    private IEnumerator ReadMessage()
-    {
-        // 非同期で待ち受けする
-        stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
-        isStopReading = true;
         yield return null;
+        readbuf = new byte[1024];
+        stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
     }
-
     public void ReadCallback(IAsyncResult ar)
     {
         Encoding enc = Encoding.UTF8;
         int bytes = stream.EndRead(ar);
+
+        if ( bytes == 0)
+        {
+            StopClient();
+            return;
+        }
+
         string message = enc.GetString(readbuf, 0, bytes);
         message = message.Replace("\r", "").Replace("\n", "");
         ClientBaseDebugLog("ReadCallback " + message);
@@ -143,7 +134,7 @@ public partial class SocketClientBase : MonoBehaviour
             }
         }
 
-        isStopReading = false;
+        stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
     }
     public static byte[] StrToByteArray(string str)
     {
