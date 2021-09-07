@@ -57,4 +57,10 @@ public class SoundManager : MonoBehaviour
     {
         ball_line_hit.PlayOneShot(ball_line_hit_clip, 1);
     }
+    [SerializeField] AudioSource ball_speed_up;
+    [SerializeField] AudioClip ball_speed_up_clip;
+    public void PlayerOneShotBallSpeedUp()
+    {
+        ball_line_hit.PlayOneShot(ball_speed_up_clip, 1);
+    }
 }
