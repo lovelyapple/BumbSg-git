@@ -143,6 +143,7 @@ public class LineController : MonoBehaviour
         if (isLocal)
         {
             SocketClientBase.GetInstance().C2A_UpdateLine(SocketClientBase.GetInstance().SelfClientObjectID.Value, this, false);
+            FieldManager.GetInstance().AddLineCount();
         }
     }
 }

@@ -85,7 +85,7 @@ public partial class SocketClientBase : MonoBehaviour
     {
         ClientBaseDebugLog("START Reading!");
         yield return null;
-        readbuf = new byte[1024];
+        readbuf = new byte[2048];
         stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
     }
     public void ReadCallback(IAsyncResult ar)
@@ -116,8 +116,6 @@ public partial class SocketClientBase : MonoBehaviour
 
         if (item != null)
         {
-
-            
             // ProtocolMaker.DebugDeserializeProtocol(item);
             switch ((ProtocolType)item.msgType)
             {
@@ -139,6 +137,7 @@ public partial class SocketClientBase : MonoBehaviour
             }
         }
 
+        readbuf = new byte[2048];
         stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
     }
     public static byte[] StrToByteArray(string str)

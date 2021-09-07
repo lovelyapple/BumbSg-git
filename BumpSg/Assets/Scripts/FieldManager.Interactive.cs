@@ -35,12 +35,7 @@ public partial class FieldManager : MonoBehaviour
                     UpdateLineObj(line, startPoint, endPoint);
                     creatingLine = line.GetComponent<LineController>();
                     selfLineList.Add(creatingLine);
-                    LineLeft--;
-
-                    if (onUpdateLineLeftAcount != null)
-                    {
-                        onUpdateLineLeftAcount.Invoke(LineLeft);
-                    }
+                    DecreaseLineCount();
                 }
 
                 isChargeMode = false;
@@ -158,7 +153,24 @@ public partial class FieldManager : MonoBehaviour
             }
         }
     }
+    public void DecreaseLineCount()
+    {
+        LineLeft--;
 
+        if (onUpdateLineLeftAcount != null)
+        {
+            onUpdateLineLeftAcount.Invoke(LineLeft);
+        }
+    }
+    public void AddLineCount()
+    {
+        LineLeft++;
+
+        if (onUpdateLineLeftAcount != null)
+        {
+            onUpdateLineLeftAcount.Invoke(LineLeft);
+        }
+    }
     List<LineController> remoteLineCtrlList = new List<LineController>();
     public void OnRemoteLineCreated(ProtocolItem item)
     {
@@ -167,9 +179,10 @@ public partial class FieldManager : MonoBehaviour
         ctrl.lineId = item.objectId_1;
         ctrl.isLocal = false;
         ctrl.transform.position = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_1);
-        ctrl.transform.localEulerAngles = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2);
+        ctrl.transform.eulerAngles = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_2);
         ctrl.transform.localScale = ProtocolMaker.FormartVector_3ToVector3(item.vectorParam_3);
         remoteLineCtrlList.Add(ctrl);
+        Debug.LogError("OnRemoteLineCreated");
     }
     public void OnRemoteLineDead(int lineId)
     {
@@ -180,5 +193,7 @@ public partial class FieldManager : MonoBehaviour
             remoteLineCtrlList.Remove(ctrl);
             ctrl.SetLineDead();
         }
+
+        Debug.LogError("OnRemoteLineDead");
     }
 }

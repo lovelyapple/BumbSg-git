@@ -147,7 +147,7 @@ public class ProtocolMaker
         c2a_item.msgType = ProtocolType.A2C_AddForceToBall;
         return c2a_item;
     }
-    public static ProtocolItem Mk_C2A_UpdateLine(int sendFrom, int id, Vector3 dir, Vector3 pos, Vector3 scale, bool isCreate)
+    public static ProtocolItem Mk_C2A_UpdateLine(int sendFrom, int id, Vector3 pos, Vector3 dir, Vector3 scale, bool isCreate)
     {
         ProtocolItem item = new ProtocolItem();
         item.sendFrom = sendFrom;

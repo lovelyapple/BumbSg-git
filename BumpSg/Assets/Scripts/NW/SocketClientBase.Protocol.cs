@@ -19,7 +19,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed RegisterAsHost");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     //
@@ -36,7 +35,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed RegisterAsClient");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     void A2C_UpdateClientInfo(ProtocolItem item)
@@ -65,7 +63,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed C2A_RequestStartGame");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     public void A2C_ResponseStartGame()
@@ -76,7 +73,6 @@ public partial class SocketClientBase
 
     public void C2A_AddForceToBall(int sendFrom, Vector3 dir, Vector3 pos, Vector3 velocity)
     {
-
         var Item = ProtocolMaker.Mk_C2A_AddForceToBall(sendFrom, dir, pos, velocity);
         var json = ProtocolMaker.SerializeToJson(Item);
         var bytes = StrToByteArray(json);
@@ -85,7 +81,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed C2A_AddForceToBall");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     public void A2C_AddForceToBall(ProtocolItem item)
@@ -108,21 +103,23 @@ public partial class SocketClientBase
 
         if (item.sendFrom != SelfClientObjectID)
         {
-            ClientBaseDebugLog("A2C_UpdateLine  Excuted!!");
+            ClientBaseDebugLog("A2C_UpdateLine  Excuted!!" + item.boolParam);
 
             if (item.boolParam)
             {
+                Debug.LogError("OnRemoteLineCreated");
                 FieldManager.GetInstance().OnRemoteLineCreated(item);
             }
             else
             {
+                Debug.LogError("OnRemoteLineDead");
                 FieldManager.GetInstance().OnRemoteLineDead(item.objectId_1);
             }
         }
     }
     public void C2A_UpdateLine(int sendFrom, LineController line, bool isCreate)
     {
-        var Item = ProtocolMaker.Mk_C2A_UpdateLine(sendFrom, line.lineId, line.transform.position, line.transform.localEulerAngles, line.transform.localScale, isCreate);
+        var Item = ProtocolMaker.Mk_C2A_UpdateLine(sendFrom, line.lineId, line.transform.position, line.transform.eulerAngles, line.transform.localScale, isCreate);
         var json = ProtocolMaker.SerializeToJson(Item);
         var bytes = StrToByteArray(json);
 
@@ -130,7 +127,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed C2A_UpdateLine");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     // public void A2C_UpdateLine()
@@ -144,7 +140,6 @@ public partial class SocketClientBase
         {
             ClientBaseDebugLog("writed A2C_AddForceToBall");
             stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
         }
     }
     public void A2C_GameResult(ProtocolItem item)

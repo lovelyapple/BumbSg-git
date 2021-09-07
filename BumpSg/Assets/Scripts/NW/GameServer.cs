@@ -59,7 +59,7 @@ public class GameServer : SocketServerBase
             Debug.LogError("ProtocolMaker.MakeToJson(msg); failed" + msg);
         }
 
-        ServerDebugLog("OnMessage" + item.msgType.ToString());
+        ServerDebugLog("OnMessage : " + item.msgType.ToString() + " From " + item.sendFrom);
 
         switch (item.msgType)
         {
@@ -75,7 +75,6 @@ public class GameServer : SocketServerBase
                 msg = ProtocolMaker.SerializeToJson(guest_logined);
                 SendMessageToClientAll(msg);
                 break;
-
 
             case ProtocolType.C2A_RequestStartGame:
                 var game_start = ProtocolMaker.Mk_A2C_ResponseStartGame();

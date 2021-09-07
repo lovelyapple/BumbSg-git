@@ -19,6 +19,7 @@ public partial class FieldManager : MonoBehaviour
     {
         if (_instance == null)
         {
+            Debug.LogError("FieldManager is null");
             return null;
         }
 

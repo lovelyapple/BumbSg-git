@@ -84,7 +84,7 @@ public class SocketServerBase : MonoBehaviour
         // 接続が切れるまで送受信を繰り返す
         while (client.Connected)
         {
-            ServerDebugLog("client is connecting " + client.Client.RemoteEndPoint);
+            // ServerDebugLog("client is connecting " + client.Client.RemoteEndPoint);
             // while (!reader.EndOfStream)
             // {
             //     // 一行分の文字列を受け取る
@@ -144,8 +144,11 @@ public class SocketServerBase : MonoBehaviour
     }
     protected void SendMessageToClientAll(string msg)
     {
+        ServerDebugLog("SendMessae to Clients " + msg);
+
         if (_clients.Count == 0)
         {
+            Debug.LogError("誰も接続せいていない");
             return;
         }
         var body = Encoding.UTF8.GetBytes(msg);
@@ -155,11 +158,13 @@ public class SocketServerBase : MonoBehaviour
         {
             try
             {
+                Debug.LogError("send message to " + _clients[id].Client.RemoteEndPoint);
                 var stream = _clients[id].GetStream();
                 stream.Write(body, 0, body.Length);
             }
             catch
             {
+                Debug.LogError("client lost " + id);
                 removeList.Add(id);
             }
         }
