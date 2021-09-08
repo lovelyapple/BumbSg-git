@@ -204,5 +204,29 @@ public partial class FieldManager : MonoBehaviour
             onUpdateLineLeftAcount.Invoke(LineLeft);
         }
     }
+    List<LineController> remoteLineCtrlList = new List<LineController>();
+    public void OnRemoteLineCreated(int id, Vector3 pos, Vector3 dir, Vector3 scl)
+    {
+        Debug.LogError("OnRemoteLineCreated");
+        var line = Instantiate(enemyLinePrefab);
+        var ctrl = line.GetComponent<LineController>();
+        ctrl.lineId = id;
+        ctrl.isLocal = false;
+        ctrl.transform.position = pos;
+        ctrl.transform.eulerAngles = dir;
+        ctrl.transform.localScale = scl;
+        remoteLineCtrlList.Add(ctrl);
+    }
+    public void OnRemoteLineDead(int lineId)
+    {
+        var ctrl = remoteLineCtrlList.Find(x => x.lineId == lineId);
 
+        if (ctrl != null)
+        {
+            remoteLineCtrlList.Remove(ctrl);
+            ctrl.SetLineDead();
+        }
+
+        Debug.LogError("OnRemoteLineDead");
+    }
 }

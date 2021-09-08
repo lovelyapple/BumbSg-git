@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Text;
 using System;
-
+using System.Threading;
 public partial class SocketClientBase : MonoBehaviour
 {
     static SocketClientBase _instance;
@@ -22,6 +22,7 @@ public partial class SocketClientBase : MonoBehaviour
     public string serverIp;
     public int serverPort;
     Coroutine streamReadingCoroutine;
+    public static SynchronizationContext mainThread;
     // if (!GameServer.IsServerStarted())
     // {
     //     Debug.Log("There is no server running");
@@ -38,6 +39,7 @@ public partial class SocketClientBase : MonoBehaviour
     }
     public void ConnectToServer(string ip)
     {
+        mainThread = SynchronizationContext.Current;
         serverIp = ip;
         SelfClientObjectID = null;
         HostClientObjectID = null;
@@ -53,7 +55,10 @@ public partial class SocketClientBase : MonoBehaviour
         }
 
         stream = Client.GetStream();
-        streamReadingCoroutine = StartCoroutine(StartReading());
+        readbuf = new byte[2048];
+        ClientBaseDebugLog("START Reading!");
+        stream.BeginRead(readbuf, 0, readbuf.Length, new AsyncCallback(ReadCallback), null);
+        // streamReadingCoroutine = StartCoroutine(StartReading());
     }
     void OnDestroy()
     {
@@ -108,41 +113,36 @@ public partial class SocketClientBase : MonoBehaviour
         try
         {
             item = JsonUtility.FromJson<ProtocolItem>(message);
+
+            mainThread.Post(d =>
+            {
+                if (item != null)
+                {
+                    // ProtocolMaker.DebugDeserializeProtocol(item);
+                    switch ((ProtocolType)item.msgType)
+                    {
+                        case ProtocolType.A2C_UpdateClientInfo:
+                            A2C_UpdateClientInfo(item);
+                            break;
+                        case ProtocolType.A2C_ResponseStartGame:
+                            A2C_ResponseStartGame();
+                            break;
+                        case ProtocolType.A2C_AddForceToBall:
+                            A2C_AddForceToBall(item);
+                            break;
+                        case ProtocolType.A2C_UpdateLine:
+                            A2C_UpdateLine(item);
+                            break;
+                        case ProtocolType.A2C_GameResult:
+                            A2C_GameResult(item);
+                            break;
+                    }
+                }
+            }, null);
         }
         catch
         {
             ClientBaseDebugLog("JsonUtility.From Json Failed");
-            return;
-        }
-
-        try
-        {
-            if (item != null)
-            {
-                // ProtocolMaker.DebugDeserializeProtocol(item);
-                switch ((ProtocolType)item.msgType)
-                {
-                    case ProtocolType.A2C_UpdateClientInfo:
-                        A2C_UpdateClientInfo(item);
-                        break;
-                    case ProtocolType.A2C_ResponseStartGame:
-                        A2C_ResponseStartGame();
-                        break;
-                    case ProtocolType.A2C_AddForceToBall:
-                        A2C_AddForceToBall(item);
-                        break;
-                    case ProtocolType.A2C_UpdateLine:
-                        A2C_UpdateLine(item);
-                        break;
-                    case ProtocolType.A2C_GameResult:
-                        A2C_GameResult(item);
-                        break;
-                }
-            }
-        }
-        catch
-        {
-            Debug.LogError("Excute Failed");
         }
 
         readbuf = new byte[2048];

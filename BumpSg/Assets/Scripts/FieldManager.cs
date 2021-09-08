@@ -144,7 +144,6 @@ public partial class FieldManager : MonoBehaviour
         targetCamera.transform.position = pos;
         targetCameraPos = pos;
         selfLineIDIndex = 0;
-        SocketClientBase.GetInstance().enemyLinePrefab = enemyLinePrefab;
     }
     void Update()
     {
